@@ -1,5 +1,4 @@
 # cs107-FinalProject, Group 16
-: Connor Capitolo, Kexin Huang, Haoxin Li, Chen Lucy Zhang
 | Group members   | Email |          
 | ----------------|:-----:| 
 | Connor Capitolo | connorcapitolo@g.harvard.edu |
