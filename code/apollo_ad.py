@@ -4,23 +4,40 @@ class Variable:
         self.der = seed
 
     def __add__(self, other):
-        try:
+        if isinstance(other, Variable):
             return Variable(self.var + other.var, self.der + other.der)
-        except AttributeError:
+        elif isinstance(other, Vector):
+            raise NotImplementedError
+        elif isinstance(other, (int, float)):
             return Variable(self.var + other, self.der)
+        else:
+            raise AttributeError('Other must be one of variable, vector, or int/float')
 
     def __radd__(self, other):
         return self.__add__(other)
 
+    def __eq__(self, other):
+        if not isinstance(other, Variable):
+            return False
+        else:
+            return True if (self.var == other.var) and (self.der == other.var)
+
     def __mul__(self, other):
-        try:
+        if isinstance(other, Variable):
             return Variable(self.var * other.var, self.var * other.der + self.der * other.var)
-        except AttributeError:
+        elif isinstance(other, Vector):
+            raise NotImplementedError
+        elif isinstance(other, (int, float)):
             return Variable(self.var * other, self.der * other)
+        else:
+            raise AttributeError('Other must be one of variable, vector, or int/float')
 
     def __rmul__(self, other):
         return self.__mul__(other)
 
+class Vector(Variable):
+    def __init__(self):
+        raise NotImplementedError
 
 if __name__ == "__main__":
     a = 2
