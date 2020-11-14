@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Variable:
 
     """Summary
@@ -178,7 +179,6 @@ class Variable:
         """
         return self.__sub__(other)
 
-
     def __truediv__(self, other):
         """Summary
         
@@ -328,6 +328,15 @@ class Variable:
     def __rpow__(self):
         raise NotImplementedError
 
+    def sqrt(self):
+        raise NotImplementedError
+
+    def exp(self):
+        raise NotImplementedError
+
+    def log(self):
+        raise NotImplementedError
+
     def sin(self):
         raise NotImplementedError
 
@@ -353,18 +362,6 @@ class Variable:
         raise NotImplementedError
 
     def tanh(self):
-        raise NotImplementedError
-
-    def sqrt(self):
-        raise NotImplementedError
-
-    def exp(self):
-        raise NotImplementedError
-
-    def log(self):
-        raise NotImplementedError
-
-    def __pow__(self):
         raise NotImplementedError
 
     def __repr__(self):
@@ -424,4 +421,4 @@ if __name__ == "__main__":
     x = Variable(3, [1, 0])
     f = x * Variable(3, [0, 1])
     print(f)
-    assert f.var == 9  and f.der == [3, 3]
+    assert f.var == 9 and (f.der == [3, 3]).all()
