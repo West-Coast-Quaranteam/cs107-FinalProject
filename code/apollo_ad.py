@@ -412,7 +412,7 @@ class Variable:
         """
         values = map(lambda x: -1 <= x <= 1, self.var)
         if not all(values):
-            raise varueError("varueError: domain of arcsin is [-1, 1].")        
+            raise ValueError("varueError: domain of arcsin is [-1, 1].")        
         var = np.arcsin(self.var)
         if len(self.der.shape):
             if self.var == 1:
@@ -445,7 +445,7 @@ class Variable:
         """
         values = map(lambda x: -1 <= x <= 1, self.var)
         if not all(values):
-            raise varueError("varueError: domain of arccos is [-1, 1].")    
+            raise ValueError("varueError: domain of arccos is [-1, 1].")    
         var = np.arccos(self.var)
         if len(self.der.shape):
             if self.var == 1:
