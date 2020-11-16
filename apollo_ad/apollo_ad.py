@@ -305,7 +305,7 @@ class Variable:
         var = abs(self.var)
         der = np.abs(self.der)
         return Variable(var, der)
-         
+
 
     def __pow__(self, exponent):
         """Returns the power of the Variable object to the exponent.
@@ -419,6 +419,7 @@ class Variable:
          """
         if variable <= 0:
             raise ValueError('Please input a positive number')
+            return False
         try:
             var = np.log(variable.var)
             der = (1.0 / variable.var) * variable.der

@@ -80,18 +80,16 @@ class TestScalar:
 
 
     def test_sin(self):
-        # Expect value of 11.73, derivative of 3.0
         x = Variable(2)
-        f = 3 * np.sin(x) + 3 * x + 3
+        f = 3 * np.sin(x)
 
-        assert np.round(f.var, 2) == [11.73]
+        assert np.round(f.var, 2) == [2.73]
         assert np.round(f.der, 2) == [3.0]
 
 
     def test_cos(self):
-        # Expect value of -10pi, derivative of 0.0 (because of -sin(pi))
         x = Variable(np.pi)
-        f = 5 * np.cos(x)+ np.cos(x) * 5
+        f = 10 * np.cos(x)
         assert f.var == [-10]
         assert abs(f.der) <= 1e-14
 
@@ -100,8 +98,6 @@ class TestScalar:
         f = np.arcsin(x)
         assert f.var == [0.0]
         assert f.der == [1.0]
-
-        # Domain of arcsin(x) is -1 <= x <= 1
         with pytest.raises(ValueError):
             x = Variable(-1.01)
             np.arcsin(x)
@@ -111,8 +107,6 @@ class TestScalar:
         f = np.arccos(x)
         assert f.var == [np.pi / 2]
         assert f.der == [-1.0]
-
-        # Domain of arccos(x) is -1 <= x <= 1
         with pytest.raises(ValueError):
             x = Variable(1.01)
             np.arccos(x)
