@@ -353,15 +353,15 @@ class Variable:
         ========= 
 
         """
-        val = np.sin(self.val)
+        var = np.sin(self.var)
         if len(self.der.shape):
-            b = np.cos(self.val)
+            b = np.cos(self.var)
             b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
             der = self.der * b
         else:
             der = None
 
-        return Variable(val, der)
+        return Variable(var, der)
 
     def cos(self):
         """ 
@@ -379,15 +379,15 @@ class Variable:
         ========= 
 
         """
-        val = np.cos(self.val)
+        var = np.cos(self.var)
         if len(self.der.shape):
-            b = -np.sin(self.val)
+            b = -np.sin(self.var)
             b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
             der = self.der * b
         else:
             der = None
 
-        return Variable(val, der)
+        return Variable(var, der)
 
 
 
@@ -410,22 +410,22 @@ class Variable:
         ========= 
 
         """
-        values = map(lambda x: -1 <= x <= 1, self.val)
+        values = map(lambda x: -1 <= x <= 1, self.var)
         if not all(values):
-            raise ValueError("ValueError: domain of arcsin is [-1, 1].")        
-        val = np.arcsin(self.val)
+            raise varueError("varueError: domain of arcsin is [-1, 1].")        
+        var = np.arcsin(self.var)
         if len(self.der.shape):
-            if self.val == 1:
+            if self.var == 1:
                 b = np.nan
-            elif self.val == -1:
+            elif self.var == -1:
                 b = np.nan
             else:
-                b = 1 / np.sqrt(1 - (self.val ** 2))
+                b = 1 / np.sqrt(1 - (self.var ** 2))
                 b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
             der = b * self.der
         else:
             der = None
-        return Variable(val, der)    
+        return Variable(var, der)    
 
     def arccos(self):
         """ 
@@ -443,22 +443,22 @@ class Variable:
         ========= 
 
         """
-        values = map(lambda x: -1 <= x <= 1, self.val)
+        values = map(lambda x: -1 <= x <= 1, self.var)
         if not all(values):
-            raise ValueError("ValueError: domain of arccos is [-1, 1].")    
-        val = np.arccos(self.val)
+            raise varueError("varueError: domain of arccos is [-1, 1].")    
+        var = np.arccos(self.var)
         if len(self.der.shape):
-            if self.val == 1:
+            if self.var == 1:
                 b = np.nan
-            elif self.val == -1:
+            elif self.var == -1:
                 b = np.nan
             else:
-                b = -1 / np.sqrt(1 - (self.val ** 2))
+                b = -1 / np.sqrt(1 - (self.var ** 2))
                 b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
             der = b * self.der
         else:
             der = None
-        return Variable(val, der)
+        return Variable(var, der)
 
 
     def arctan(self):
@@ -474,10 +474,10 @@ class Variable:
         raise NotImplementedError
 
     def __repr__(self):
-        return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
+        return 'varue: ' + str(self.var) + ' , Der: ' + str(self.der) 
 
     def __str__(self):
-        return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
+        return 'varue: ' + str(self.var) + ' , Der: ' + str(self.der) 
 
 
 if __name__ == "__main__":

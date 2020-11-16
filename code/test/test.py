@@ -12,12 +12,12 @@ import apollo_ad as ap
 def test_apollo_ad_functions():
 
 	def test_sin():
-		# Expect value of 18.42, derivative of 6.0
+		# Expect value of 10.71, derivative of 3.0
 		x = ap.Variable(np.pi / 2)
-		f = 3 * 2 * np.sin(x) + 6 * x + 3
+		f = 3 * np.sin(x) + 3 * x + 3
 
-		assert np.round(f.val, 2) == [18.42]
-		assert np.round(f.der, 2) == [6.0]
+		assert np.round(f.val, 2) == [10.71]
+		assert np.round(f.der, 2) == [3.0]
 
 
 		x2 = ap.Variable(np.pi)
