@@ -84,7 +84,7 @@ class TestScalar:
         f = Variable.sin(x)
 
         assert np.round(f.var, 2) == [0.91]
-        assert np.round(f.der, 2) == [1.0]
+        assert abs(np.round(f.der, 2)) == [0.42]
 
 
     def test_cos(self):
