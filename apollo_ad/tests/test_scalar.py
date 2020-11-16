@@ -96,14 +96,14 @@ class TestScalar:
         x = Variable(2)
         f = 3 * Variable.tan(x)
 
-        assert f.var == -6.555119589784557 and f.der == [17.323197612125753]
+        assert f.var == 3 * np.tan(2) and np.round(f.der,4) == [17.3232]
 
         x = Variable(np.pi)
         f = Variable.tan(x) * Variable.tan(x)
 
         # I'm not sure if this should throw an error or not
         # when using AutoED this produces [-2048.537524357708], but the current value returned for us is [-2048.53752436]
-        assert np.round(f.der,2) == [0]
+        assert np.round(f.der,5) == [0]
 
 
 
@@ -119,17 +119,17 @@ class TestScalar:
     def test_sinh_function(self):
         x = Variable(2)
         f = 2 * Variable.sinh(x)
-        # on AutoED this gave 7.253720815694038 (only off by the final decimal, which was 7 vs. 8; this is where machine precision could have an issue)
-        assert f.der == [7.524391382167263]
+
+        assert np.round(f.der,4) == [7.5244]
 
 
     def test_cosh_function(self):
         x = Variable(4)
         f = 3 * Variable.cosh(x)
-        assert f.var == 81.92469850804946
+        assert np.round(f.var,4) == 81.9247
 
 
     def test_tanh_function(self):
         x = Variable(3)
         f = 2 * Variable.tanh(x)
-        assert f.var == 1.990109507373461 and f.der == [0.019732074330880384]
+        assert np.round(f.var,4) == 1.9901 and np.round(f.der,4) == [0.0197]

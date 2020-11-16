@@ -472,8 +472,9 @@ class Variable:
 
         EXAMPLES
         =========
-        >>> linear_roots(1.0, 2.0)
-        -2.0
+        >>> x = Variable(np.pi)
+        >>> Variable.tan(x)
+        Variable(-1.22464679915e-16, [ 1.])
         """
 
         # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
@@ -511,11 +512,11 @@ class Variable:
 
         EXAMPLES
         =========
-        >>> linear_roots(1.0, 2.0)
-        -2.0
+        >>> x = Variable(np.pi)
+        >>> Variable.arctan(x)
+        Variable(1.26262725568, [ 0.09199967])
         """
 
-        # Domain and range: The domain of the arctangent function is all real numbers and the range is from −π/2 to π/2 radians exclusive (or from −90° to 90°).
         # no need to check for a value error
 
         new_var = np.arctan(self.var)
@@ -540,11 +541,11 @@ class Variable:
 
         EXAMPLES
         =========
-        >>> linear_roots(1.0, 2.0)
-        -2.0
+        >>> x = Variable(1)
+        >>> Variable.sinh(x)
+        Variable(1.17520119364, [ 1.54308063])
         """
 
-        # D(sinh) = ℝ.
         # don't need to check for domain values
 
         new_var = np.sinh(self.var)
@@ -569,11 +570,11 @@ class Variable:
 
         EXAMPLES
         =========
-        >>> linear_roots(1.0, 2.0)
-        -2.0
+        >>> x = Variable(1)
+        >>> Variable.cosh(x)
+        Variable(1.54308063482, [ 1.17520119])
         """
 
-        # D(cosh) = ℝ.
         # don't need to check for domain values
 
         new_var = np.cosh(self.var)
@@ -598,11 +599,11 @@ class Variable:
 
         EXAMPLES
         =========
-        >>> linear_roots(1.0, 2.0)
-        -2.0
+        >>> x = Variable(1)
+        >>> Variable.tanh(x)
+        Variable(0.761594155956 , [ 0.41997434])
         """
 
-        # D(tanh) = ℝ.
         # don't need to check for domain values
 
         new_var = np.tanh(self.var)
@@ -622,5 +623,14 @@ class Variable:
 
 
 if __name__ == "__main__":
-    x = Variable(0, 1)
-    print(Variable.log(x))
+    # x = Variable(0, 1)
+    # print(Variable.log(x))
+
+    x = Variable(np.pi)
+    print(Variable.tan(x))
+    print(Variable.arctan(x))
+
+    x = Variable(1)
+    print(Variable.sinh(x))
+    print(Variable.cosh(x))
+    print(Variable.tanh(x))
