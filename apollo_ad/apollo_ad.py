@@ -410,22 +410,9 @@ class Variable:
         ========= 
 
         """
-        values = map(lambda x: -1 <= x <= 1, self.var)
-        if not all(values):
-            raise ValueError("varueError: domain of arcsin is [-1, 1].")        
         var = np.arcsin(self.var)
-        if len(self.der.shape):
-            if self.var == 1:
-                b = np.nan
-            elif self.var == -1:
-                b = np.nan
-            else:
-                b = 1 / np.sqrt(1 - (self.var ** 2))
-                b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
-            der = b * self.der
-        else:
-            der = None
-        return Variable(var, der)    
+        der = 1 / np.sqrt(1 - (self.var ** 2))
+        return Variable(var, map(lambda x,f=der: f*x, self.der)) 
 
     def arccos(self):
         """ 
@@ -443,22 +430,10 @@ class Variable:
         ========= 
 
         """
-        values = map(lambda x: -1 <= x <= 1, self.var)
-        if not all(values):
-            raise ValueError("varueError: domain of arccos is [-1, 1].")    
-        var = np.arccos(self.var)
-        if len(self.der.shape):
-            if self.var == 1:
-                b = np.nan
-            elif self.var == -1:
-                b = np.nan
-            else:
-                b = -1 / np.sqrt(1 - (self.var ** 2))
-                b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
-            der = b * self.der
-        else:
-            der = None
-        return Variable(var, der)
+        var = np.arcsin(self.var)
+        der = -1 / np.sqrt(1 - (self.var ** 2))
+        return Variable(var, map(lambda x,f=der: f*x, self.der)) 
+
 
 
     def arctan(self):
@@ -481,53 +456,5 @@ class Variable:
 
 
 if __name__ == "__main__":
-    a = 2
-    alpha = 2.0
-    beta = 3.0
-
-    x = Variable(a)
-    f = alpha * x + beta
-    print(f)
-    assert f.var == 7.0 and f.der == [2.0]
-
-    f = x * alpha + beta
-    print(f)
-    assert f.var == 7.0 and f.der == [2.0]
-
-    f = beta + alpha * x
-    print(f)
-    assert f.var == 7.0 and f.der == [2.0]
-
-    f = beta + x * alpha
-    print(f)
-    assert f.var == 7.0 and f.der == [2.0]
-
-    x = Variable(3, [1])
-    x = -x 
-    print(x)
-    assert x.var == -3 and x.der == [-1]
-
-    x = Variable(3, [1])
-    f = x - Variable(3, [1])
-    print(f)
-    assert f.var == 0  and f.der == [0]
-
-    x = Variable(3, [1])
-    f = Variable(3, [1]) - x
-    print(f)
-    assert f.var == 0  and f.der == [0]
-
-    f = Variable(3, [1]) - 3
-    print(f)
-    assert f.var == 0  and f.der == [1]
-
-    print(Variable(3, [1]) == 3)
-
-    X = Variable(3, 1)
-    Y = Variable(3, [1])
-    print(X == Y)
-
-    x = Variable(3, [1, 0])
-    f = x * Variable(3, [0, 1])
-    print(f)
-    assert f.var == 9 and (f.der == [3, 3]).all()
+    x = Variable(0, 1)
+    print(Variable.log(x))

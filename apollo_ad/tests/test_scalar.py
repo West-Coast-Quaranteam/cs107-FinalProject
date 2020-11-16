@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from ..apollo_ad import *
+from ..apollo_ad import Variable
 
 
 
@@ -79,7 +79,8 @@ class TestScalar:
             x = Variable(-14)
             y = Variable.log(x)
 
-	def test_sin():
+
+    def test_sin(self):
         # Expect value of 11.73, derivative of 3.0
         x = Variable(2)
         f = 3 * np.sin(x) + 3 * x + 3
@@ -88,31 +89,31 @@ class TestScalar:
         assert np.round(f.der, 2) == [3.0]
 
 
-	def test_cos():
-		# Expect value of -10pi, derivative of 0.0 (because of -sin(pi))
-		x = Variable(np.pi)
-		f = 5 * np.cos(x)+ np.cos(x) * 5
-		assert f.var == [-10]
-		assert abs(f.der) <= 1e-14
+    def test_cos(self):
+        # Expect value of -10pi, derivative of 0.0 (because of -sin(pi))
+        x = Variable(np.pi)
+        f = 5 * np.cos(x)+ np.cos(x) * 5
+        assert f.var == [-10]
+        assert abs(f.der) <= 1e-14
 
-	def test_arcsin():
-		x = Variable(0)
-		f = np.arcsin(x)
-		assert f.var == [0.0]
-		assert f.der == [1.0]
+    def test_arcsin(self):
+        x = Variable(0)
+        f = np.arcsin(x)
+        assert f.var == [0.0]
+        assert f.der == [1.0]
 
-		# Domain of arcsin(x) is -1 <= x <= 1
+        # Domain of arcsin(x) is -1 <= x <= 1
         with pytest.raises(ValueError):
-			x = Variable(-1.01)
-			np.arcsin(x)
+            x = Variable(-1.01)
+            np.arcsin(x)
 
-	def test_arccos():
-		x = Variable(0)
-		f = np.arccos(x)
-		assert f.var == [np.pi / 2]
-		assert f.der == [-1.0]
+    def test_arccos(self):
+        x = Variable(0)
+        f = np.arccos(x)
+        assert f.var == [np.pi / 2]
+        assert f.der == [-1.0]
 
-		# Domain of arccos(x) is -1 <= x <= 1
+        # Domain of arccos(x) is -1 <= x <= 1
         with pytest.raises(ValueError):
-			x = Variable(1.01)
-			np.arccos(x)
+            x = Variable(1.01)
+            np.arccos(x)
