@@ -81,9 +81,9 @@ class TestScalar:
 
     def test_sin(self):
         x = Variable(2)
-        f = 3 * np.sin(x)
+        f = Variable.sin(x)
 
-        assert np.round(f.var, 2) == [2.73]
+        assert f.var == np.sin(x)
         assert np.round(f.der, 2) == [3.0]
 
 

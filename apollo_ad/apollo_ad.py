@@ -447,7 +447,6 @@ class Variable:
         var = np.sin(self.var)
         if len(self.der.shape):
             b = np.cos(self.var)
-            b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
             der = self.der * b
         else:
             der = None
@@ -473,7 +472,6 @@ class Variable:
         var = np.cos(self.var)
         if len(self.der.shape):
             b = -np.sin(self.var)
-            b = np.expand_dims(b, 1) if len(self.der.shape) > len(b.shape) else b
             der = self.der * b
         else:
             der = None
