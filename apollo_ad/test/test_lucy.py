@@ -108,7 +108,7 @@ class TestScalar:
 		assert f.der == [1.0]
 
 		# Domain of arcsin(x) is -1 <= x <= 1
-		with np.testing.assert_raises(ValueError):
+        with pytest.raises(ValueError):
 			x = Variable(-1.01)
 			np.arcsin(x)
 
@@ -119,6 +119,6 @@ class TestScalar:
 		assert f.der == [-1.0]
 
 		# Domain of arccos(x) is -1 <= x <= 1
-		with np.testing.assert_raises(ValueError):
+        with pytest.raises(ValueError):
 			x = Variable(1.01)
 			np.arccos(x)
