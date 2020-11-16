@@ -327,7 +327,7 @@ class Variable:
          INPUTS
          =======
          self: Variable object
-         exponent: int/float, to the power of
+         exponent: Variable/int/float, to the power of
 
          RETURNS
          ========
@@ -335,23 +335,27 @@ class Variable:
 
          NOTES
          =====
-         currently do not support when `self` and `other` are both Variable type
-         self has to be positive, and exponent has to be >= 1. Don't support imaginary numbers
-
+         currently the base has to be > 0 and exponent has to be >= 1.
+         complex numbers not supported
          EXAMPLES
          =========
          >>> x = Variable(3, 1)
          >>> x ** 2.0
          Variable(9, [6])
          """
-        # `self` ** other
-        # check domain, current
-        if self.var < 0 and exponent < 1:
-            raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
-
-        var = self.var ** exponent
-        der = self.der * exponent * (self.var ** (exponent - 1))
-        return Variable(var, der)
+        # `self` ^ other
+        # check domain
+        if self.var <= 0 and exponent < 1:
+            raise ValueError('Base has to be > 0, and the exponent has to be >= 1')
+        try:
+            var = self.var ** exponent.var
+            der = exponent.var * (self.var ** (exponent.var - 1)) * self.der + \
+                (self.var ** exponent.var) * np.log(self.var) * exponent.der
+            return Variable(var, der)
+        except AttributeError:
+            var = self.var ** exponent
+            der = self.der * exponent * (self.var ** (exponent - 1))
+            return Variable(var, der)
 
     def __rpow__(self, other):
         """Returns the power of the `other` object to `self`.
@@ -489,4 +493,4 @@ class Variable:
 
 if __name__ == "__main__":
     x = Variable(0, 1)
-    print(Variable.log(x))
+    print(x ** 2)
