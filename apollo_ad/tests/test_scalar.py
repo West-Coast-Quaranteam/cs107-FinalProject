@@ -13,6 +13,14 @@ class TestScalar:
         assert y.var == 5 ** 3
         assert y.der == 3 * (5 ** 2)
 
+    def test_pow_var(self):
+        # test Variable raise to a Variable
+        x = Variable(2)
+        y = x ** (3 * x)
+
+        assert y.var == 2 ** 6
+        assert y.der == 192 + 192 * np.log(2)
+
     def test_pow_imaginary(self):
         # test pow when base < 0 and exponent < 1
         with pytest.raises(ValueError):
