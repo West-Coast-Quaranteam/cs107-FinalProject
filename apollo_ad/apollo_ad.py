@@ -464,7 +464,38 @@ class Variable:
         raise NotImplementedError
 
     def tan(self):
-        raise NotImplementedError
+        """Returns the tangent of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        tan: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> x = Variable(np.pi)
+        >>> Variable.tan(x)
+        Variable(-1.22464679915e-16, [ 1.])
+        """
+
+        # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
+        # would typically do try-except, but due to machine precision this won't work
+        check_domain = self.var % np.pi == (np.pi/2)
+        if check_domain:
+            raise ValueError(
+                'Cannot take the tangent of this value since it is a multiple of pi/2 + (pi * n), where n is a positive integer')
+
+        new_var = np.tan(self.var)
+
+        tan_derivative = 1 / np.power(np.cos(self.var), 2)
+        new_der = self.der * tan_derivative
+
+        tan = Variable(new_var, new_der)
+
+        return tan
 
     def arcsin(self):
         raise NotImplementedError
@@ -473,24 +504,123 @@ class Variable:
         raise NotImplementedError
 
     def arctan(self):
-        raise NotImplementedError
+        """Returns the arctangent of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        arctan: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> x = Variable(np.pi)
+        >>> Variable.arctan(x)
+        Variable(1.26262725568, [ 0.09199967])
+        """
+
+        # no need to check for a value error
+
+        new_var = np.arctan(self.var)
+
+        arctan_derivative = 1 / (1 + np.power(self.var, 2))
+        new_der = self.der * arctan_derivative
+
+        arctan = Variable(new_var, new_der)
+
+        return arctan
 
     def sinh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic sin of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        sinh: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.sinh(x)
+        Variable(1.17520119364, [ 1.54308063])
+        """
+
+        # don't need to check for domain values
+
+        new_var = np.sinh(self.var)
+
+        sinh_derivative = np.cosh(self.var)
+        new_der = self.der * sinh_derivative
+
+        sinh = Variable(new_var, new_der)
+
+        return sinh
 
     def cosh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic cosine of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        cosh: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.cosh(x)
+        Variable(1.54308063482, [ 1.17520119])
+        """
+
+        # don't need to check for domain values
+
+        new_var = np.cosh(self.var)
+
+        cosh_derivative = np.sinh(self.var)
+        new_der = self.der * cosh_derivative
+
+        cosh = Variable(new_var, new_der)
+
+        return cosh
 
     def tanh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic tangent of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        tanh: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.tanh(x)
+        Variable(0.761594155956 , [ 0.41997434])
+        """
+
+        # don't need to check for domain values
+
+        new_var = np.tanh(self.var)
+
+        tanh_derivative = 1 / np.power(np.cosh(self.var), 2)
+        new_der = self.der * tanh_derivative
+
+        tanh = Variable(new_var, new_der)
+
+        return tanh
 
     def __repr__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
 
     def __str__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
-
-
-if __name__ == "__main__":
-    x = Variable(0, 1)
-    print(x ** 2)
