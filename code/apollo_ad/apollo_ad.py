@@ -346,7 +346,7 @@ class Variable:
          """
         # `self` ** other
         # check domain, current
-        if self.var <= 0 and exponent <= 1:
+        if self.var < 0 and exponent < 1:
             raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
 
         var = self.var ** exponent
@@ -374,7 +374,9 @@ class Variable:
          >>> 2.0 ** x
          Variable(8, [5.545])
          """
-        # `other` ** `self`
+        # `other` ^ `self`
+        if other < 0 and self.var < 1:
+            raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
         var = other ** self.var
         der = (other ** self.var) * np.log(other) * self.der
         return Variable(var, der)
@@ -384,7 +386,7 @@ class Variable:
         """Returns the square root of `variable`.
          INPUTS
          =======
-         variable: Variable object
+         variable: Variable object/int/float
 
          RETURNS
          ========
@@ -396,6 +398,8 @@ class Variable:
          >>> Variable.sqrt(x)
          Variable(1.732, [0.289])
          """
+        if variable < 0:
+            raise ValueError('Cannot take sqrt of a negative value')
         return variable ** (1/2)
 
     @staticmethod
@@ -440,16 +444,14 @@ class Variable:
          >>> Variable.log(x)
          Variable(1.732, [0.289])
          """
+        if variable <= 0:
+            raise ValueError('Please input a positive number')
         try:
             var = np.log(variable.var)
             der = (1.0 / variable.var) * variable.der
             return Variable(var, der)
-
         except AttributeError:
             return np.log(variable)
-
-        except ZeroDivisionError as error:
-            raise error('Please input a non-negative value')
 
     def sin(self):
         raise NotImplementedError
@@ -486,5 +488,5 @@ class Variable:
 
 
 if __name__ == "__main__":
-    x = Variable(1, 1)
-    print(x ** x)
+    x = Variable(0, 1)
+    print(Variable.log(x))
