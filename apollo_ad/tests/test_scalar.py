@@ -97,7 +97,7 @@ class TestScalar:
         x = Variable(0)
         f = np.arcsin(x)
         assert f.var == [0.0]
-        assert np.round(f.der, 1) == [1.0]
+        assert f.der == [1.0]
         with pytest.raises(ValueError):
             x = Variable(-1.01)
             np.arcsin(x)
@@ -105,8 +105,8 @@ class TestScalar:
     def test_arccos(self):
         x = Variable(0)
         f = np.arccos(x)
-        assert np.round(f.var, 2) == [1.57]
-        assert np.round(f.der, 1) == [0.0]
+        assert f.var == [1.57079633]
+        assert f.der == [-1.0]
         with pytest.raises(ValueError):
             x = Variable(1.01)
             np.arccos(x)
