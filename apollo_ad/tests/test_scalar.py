@@ -98,10 +98,14 @@ class TestScalar:
 
         assert f.var == -6.555119589784557 and f.der == [17.323197612125753]
 
-        # try:
-        #     f = np.tan(x)
-        # except ValueError:
-        #     print('Correctly threw ValueError for tangent function.')
+        x = Variable(np.pi)
+        f = Variable.tan(x) * Variable.tan(x)
+
+        # I'm not sure if this should throw an error or not
+        # when using AutoED this produces [-2048.537524357708], but the current value returned for us is [-2048.53752436]
+        assert np.round(f.der,2) == [0]
+
+
 
 
     # can use these function below to run the code manually rather than with pytest
