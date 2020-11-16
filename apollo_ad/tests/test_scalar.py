@@ -3,7 +3,6 @@ import numpy as np
 from ..apollo_ad import Variable
 
 
-
 class TestScalar:
 
     def test_pow(self):

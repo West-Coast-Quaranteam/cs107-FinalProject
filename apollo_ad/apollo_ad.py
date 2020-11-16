@@ -1,3 +1,4 @@
+
 import numpy as np
 
 
@@ -42,24 +43,20 @@ class Variable:
         -------
         var: Variable
             Description
-
         Examples
         -------
         add scalar
         >> x = Variable(3, [1])
         >> x + 3
         Variable(6, 1)
-
         add another variable - X
         >> x = Variable(3, [1])
         >> x + Variable(3, [1])
         Variable(6, [2])
-
         add another variable - Y
         >> x = Variable(3, [1, 0])
         >> x + Variable(3, [0, 1])
         Variable(6, [1, 1])
-
         """
         try:
             return Variable(self.var + other.var, self.der + other.der)
@@ -93,24 +90,20 @@ class Variable:
         -------
         var: Variable
             Description
-
         Examples
         -------
         multiplies scalar
         >> x = Variable(3, [1])
         >> x * 3
         Variable(18, 1)
-
         multiplies another variable - X
         >> x = Variable(3, [1])
         >> x + Variable(3, [1])
         Variable(6, [2])
-
         multiplies another variable - Y
         >> x = Variable(3, [1, 0])
         >> x * Variable(3, [0, 1])
         Variable(9, [3, 3])
-
         """
         try:
             return Variable(self.var * other.var, self.var * other.der + self.der * other.var)
@@ -144,19 +137,16 @@ class Variable:
         -------
         var: Variable
             Description
-
         Examples
         -------
         multiplies scalar
         >> x = Variable(3, [1])
         >> x * 3
         Variable(18, 1)
-
         multiplies another variable - X
         >> x = Variable(3, [1])
         >> x - Variable(3, [1])
         Variable(0, [0])
-
         multiplies another variable - Y
         >> x = Variable(4, [1, 0])
         >> x * Variable(3, [0, 1])
@@ -191,24 +181,20 @@ class Variable:
         -------
         var: Variable
             Description
-
         Examples
         -------
         divides scalar
         >> x = Variable(3, [1])
         >> x / 3
         Variable(1, 1)
-
         divides another variable - X
         >> x = Variable(3, [1])
         >> x / Variable(4, [1])
         Variable(3/4, [1/16])
-
         multiplies another variable - Y
         >> x = Variable(3, [1, 0])
         >> x / Variable(4, [0, 1])
         Variable(3/4, [1/4, -3/16])
-
         """
         try:
             return Variable(self.var / other.var, (self.der * other.var - self.var * other.der)/(other.var**2))
@@ -232,7 +218,6 @@ class Variable:
 
     def __neg__(self):
         """Summary
-
         Examples
         -------
         >> x = Variable(3, [1])
@@ -258,7 +243,6 @@ class Variable:
         -------
         >> Variable(3, [1]) == 3
         False
-
         >> X = Variable(3, 1)
         >> Y = Variable(3, [1])
         >> X == Y
@@ -297,45 +281,151 @@ class Variable:
         try:
             return self.var < other.var
         except AttributeError:
-            return self.var < var
+            return self.var < other
 
     def __le__(self, other):
         try:
             return self.var <= other.var
         except AttributeError:
-            return self.var <= var
+            return self.var <= other
 
     def __gt__(self, other):
         try:
             return self.var > other.var
         except AttributeError:
-            return self.var > var
+            return self.var > other
 
     def __ge__(self, other):
         try:
             return self.var >= other.var
         except AttributeError:
-            return self.var >= var
+            return self.var >= other
 
     def __abs__(self):
         var = abs(self.var)
         der = np.abs(self.der)
-        return Variable(var, der) 
+        return Variable(var, der)
+         
 
-    def __pow__(self):
-        raise NotImplementedError
+    def __pow__(self, exponent):
+        """Returns the power of the Variable object to the exponent.
+         INPUTS
+         =======
+         self: Variable object
+         exponent: int/float, to the power of
+         RETURNS
+         ========
+         power: a new Variable object after raising `self` to the power of `exponent`
+         NOTES
+         =====
+         currently do not support when `self` and `other` are both Variable type
+         self has to be positive, and exponent has to be >= 1. Don't support imaginary numbers
+         EXAMPLES
+         =========
+         >>> x = Variable(3, 1)
+         >>> x ** 2.0
+         Variable(9, [6])
+         """
+        # `self` ** other
+        # check domain, current
+        if self.var < 0 and exponent < 1:
+            raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
 
-    def __rpow__(self):
-        raise NotImplementedError
+        var = self.var ** exponent
+        der = self.der * exponent * (self.var ** (exponent - 1))
+        return Variable(var, der)
 
-    def sqrt(self):
-        raise NotImplementedError
+    def __rpow__(self, other):
+        """Returns the power of the `other` object to `self`.
+         INPUTS
+         =======
+         self: Variable object, to the power of
+         other: int/float, base
+         RETURNS
+         ========
+         power: a new Variable object after raising `other` to the power of `self`
+         NOTES
+         =====
+         currently do not support when `self` and `other` are both Variable type
+         EXAMPLES
+         =========
+         >>> x = Variable(3, 1)
+         >>> 2.0 ** x
+         Variable(8, [5.545])
+         """
+        # `other` ^ `self`
+        if other < 0 and self.var < 1:
+            raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
+        var = other ** self.var
+        der = (other ** self.var) * np.log(other) * self.der
+        return Variable(var, der)
 
-    def exp(self):
-        raise NotImplementedError
+    @staticmethod
+    def sqrt(variable):
+        """Returns the square root of `variable`.
+         INPUTS
+         =======
+         variable: Variable object/int/float
+         RETURNS
+         ========
+         sqrt: a new Variable object after taking square root of `variable`
+         EXAMPLES
+         =========
+         >>> x = Variable(3)
+         >>> Variable.sqrt(x)
+         Variable(1.732, [0.289])
+         """
+        if variable < 0:
+            raise ValueError('Cannot take sqrt of a negative value')
+        return variable ** (1/2)
 
-    def log(self):
-        raise NotImplementedError
+    @staticmethod
+    def exp(variable):
+        """Returns e to the value.
+         INPUTS
+         =======
+         variable: Variable object/int/float
+         RETURNS
+         ========
+         sqrt: a new Variable object after raising e to the value
+         EXAMPLES
+         =========
+         >>> x = Variable(5)
+         >>> Variable.exp(x)
+         Variable(1.732, [0.289])
+         """
+        try:
+            var = np.exp(variable.var)
+            der = np.exp(variable.var) * variable.der
+            return Variable(var, der)
+
+        except AttributeError:
+            return np.exp(variable)
+
+    @staticmethod
+    def log(variable):
+        """Returns the natural log of `variable`.
+         INPUTS
+         =======
+         variable: Variable object/int/float
+         RETURNS
+         ========
+         sqrt: a new Variable object after taking natural log
+         EXAMPLES
+         =========
+         >>> x = Variable(3)
+         >>> Variable.log(x)
+         Variable(1.732, [0.289])
+         """
+        if variable <= 0:
+            raise ValueError('Please input a positive number')
+        try:
+            var = np.log(variable.var)
+            der = (1.0 / variable.var) * variable.der
+            return Variable(var, der)
+        except AttributeError:
+            return np.log(variable)
+
 
     def sin(self):
         """ 
