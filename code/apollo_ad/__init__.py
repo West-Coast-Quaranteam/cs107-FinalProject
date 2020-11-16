@@ -1,1 +1,0 @@
-name = 'apollo_ad'
