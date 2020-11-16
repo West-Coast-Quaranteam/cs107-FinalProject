@@ -460,7 +460,37 @@ class Variable:
         raise NotImplementedError
 
     def tan(self):
-        raise NotImplementedError
+        """Returns the tangent of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        tan: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> linear_roots(1.0, 2.0)
+        -2.0
+        """
+
+        # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
+        # would typically do try-except, but due to machine precision this won't work
+        check_domain = self.var % np.pi == (np.pi/2)
+        if check_domain:
+            raise ValueError(
+                'Cannot take the tangent of this value since it is a multiple of pi/2 + (pi * n), where n is a positive integer')
+
+        new_var = np.tan(self.var)
+
+        tan_derivative = 1 / np.power(np.cos(self.var), 2)
+        new_der = self.der * tan_derivative
+
+        tan = Variable(new_var, new_der)
+
+        return tan
 
     def arcsin(self):
         raise NotImplementedError
@@ -469,16 +499,120 @@ class Variable:
         raise NotImplementedError
 
     def arctan(self):
-        raise NotImplementedError
+        """Returns the arctangent of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        arctan: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> linear_roots(1.0, 2.0)
+        -2.0
+        """
+
+        # Domain and range: The domain of the arctangent function is all real numbers and the range is from −π/2 to π/2 radians exclusive (or from −90° to 90°).
+        # no need to check for a value error
+
+        new_var = np.arctan(self.var)
+
+        arctan_derivative = 1 / (1 + np.power(self.var, 2))
+        new_der = self.der * arctan_derivative
+
+        arctan = Variable(new_var, new_der)
+
+        return arctan
 
     def sinh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic sin of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        sinh: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> linear_roots(1.0, 2.0)
+        -2.0
+        """
+
+        # D(sinh) = ℝ.
+        # don't need to check for domain values
+
+        new_var = np.sinh(self.var)
+
+        sinh_derivative = np.cosh(self.var)
+        new_der = self.der * sinh_derivative
+
+        sinh = Variable(new_var, new_der)
+
+        return sinh
 
     def cosh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic cosine of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        cosh: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> linear_roots(1.0, 2.0)
+        -2.0
+        """
+
+        # D(cosh) = ℝ.
+        # don't need to check for domain values
+
+        new_var = np.cosh(self.var)
+
+        cosh_derivative = np.sinh(self.var)
+        new_der = self.der * cosh_derivative
+
+        cosh = Variable(new_var, new_der)
+
+        return cosh
 
     def tanh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic tangent of the Variable object.
+
+        INPUTS
+        =======
+        self: Variable object
+
+        RETURNS
+        ========
+        tanh: a new Variable object
+
+        EXAMPLES
+        =========
+        >>> linear_roots(1.0, 2.0)
+        -2.0
+        """
+
+        # D(tanh) = ℝ.
+        # don't need to check for domain values
+
+        new_var = np.tanh(self.var)
+
+        tanh_derivative = 1 / np.power(np.cosh(self.var), 2)
+        new_der = self.der * tanh_derivative
+
+        tanh = Variable(new_var, new_der)
+
+        return tanh
 
     def __repr__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 

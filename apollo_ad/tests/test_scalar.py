@@ -79,5 +79,53 @@ class TestScalar:
             y = Variable.log(x)
 
 
+    def test_tangent_function(self):
+
+        x = Variable(np.pi)
+        f = Variable.tan(x)
+
+        # However, if you specify a message with the assertion like this:
+        # assert a % 2 == 0, "value was odd, should be even"
+        # then no assertion introspection takes places at all and the message will be simply shown in the traceback.
+        assert f.der == [1]
+
+        x = Variable(3*np.pi/2)
+        with pytest.raises(ValueError):
+            f = Variable.tan(x)
+
+        x = Variable(2)
+        f = 3 * Variable.tan(x)
+
+        assert f.var == -6.555119589784557 and f.der == [17.323197612125753]
+
+        # try:
+        #     f = np.tan(x)
+        # except ValueError:
+        #     print('Correctly threw ValueError for tangent function.')
 
 
+    # can use these function below to run the code manually rather than with pytest
+    def test_arctangent_function(self):
+        x = Variable(2)
+        f = Variable.arctan(x)
+
+        assert f.der == [.2]
+
+
+    def test_sinh_function(self):
+        x = Variable(2)
+        f = 2 * Variable.sinh(x)
+        # on AutoED this gave 7.253720815694038 (only off by the final decimal, which was 7 vs. 8; this is where machine precision could have an issue)
+        assert f.der == [7.524391382167263]
+
+
+    def test_cosh_function(self):
+        x = Variable(4)
+        f = 3 * Variable.cosh(x)
+        assert f.var == 81.92469850804946
+
+
+    def test_tanh_function(self):
+        x = Variable(3)
+        f = 2 * Variable.tanh(x)
+        assert f.var == 1.990109507373461 and f.der == [0.019732074330880384]
