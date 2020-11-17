@@ -1,7 +1,6 @@
 import pytest
 import numpy as np
 from ..apollo_ad import Variable
-import apollo_ad.Variable
 
 
 class TestScalar:
