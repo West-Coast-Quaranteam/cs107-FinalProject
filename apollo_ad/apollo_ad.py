@@ -12,7 +12,6 @@ class Variable:
     var : TYPE
         Description
     """
-    
     def __init__(self, var, seed = np.array([1])):
         """Summary
         
@@ -367,7 +366,6 @@ class Variable:
          RETURNS
          ========
          power: a new Variable object after raising `other` to the power of `self`
-
          NOTES
          =====
          currently do not support when `self` and `other` are both Variable type
@@ -458,18 +456,61 @@ class Variable:
             return np.log(variable)
 
     def sin(self):
-        raise NotImplementedError
+
+        """Returns the sine of Var object.
+        
+        INPUTS
+        ==========
+        self: Var object
+        
+        Returns
+        ========= 
+        output: sine of self
+        
+        Examples
+        ========= 
+
+        """
+        var = np.sin(self.var)
+        if len(self.der.shape):
+            b = np.cos(self.var)
+            der = self.der * b
+        else:
+            der = None
+
+        return Variable(var, der)
+
 
     def cos(self):
-        raise NotImplementedError
+        """ 
+        Returns the cosine of Var object.
+        
+        INPUTS
+        ==========
+        self: Var object
+        
+        Returns
+        ========= 
+        output: cosine of self
+        
+        Examples
+        ========= 
+
+        """
+        var = np.cos(self.var)
+        if len(self.der.shape):
+            b = -np.sin(self.var)
+            der = self.der * b
+        else:
+            der = None
+
+        return Variable(var, der)
 
     def tan(self):
         """Returns the tangent of the Variable object.
-
         INPUTS
         =======
         self: Variable object
-
         RETURNS
         ========
         tan: a new Variable object
@@ -498,22 +539,66 @@ class Variable:
         return tan
 
     def arcsin(self):
-        raise NotImplementedError
+        """ 
+        Returns the arcsine of Var object.
+        
+        INPUTS
+        ==========
+        self: Var object
+        
+        Returns
+        ========= 
+        output:  arcsine of self
+        
+        Examples
+        ========= 
+
+        """
+        if self.var>1 or self.var <-1:
+            raise ValueError('Please input -1 <= x <=1')
+            return False
+        else:
+            var = np.arcsin(self.var)
+            der = 1 / np.sqrt(1 - (self.var ** 2))
+
+
+        return Variable(var, der) 
+
 
     def arccos(self):
-        raise NotImplementedError
+        """ 
+        Returns the arccosine of Var object.
+        
+        INPUTS
+        ==========
+        self: Var object
+        
+        Returns
+        ========= 
+        output: arccosine of self
+        
+        Examples
+        ========= 
+
+        """
+
+        if self.var>1 or self.var <-1:
+            raise ValueError('Please input -1 <= x <=1')
+            return False
+        else:
+            var = np.arcsin(self.var)
+            der = -1 / np.sqrt(1 - (self.var ** 2))
+        return Variable(var, der)
 
     def arctan(self):
         """Returns the arctangent of the Variable object.
-
         INPUTS
         =======
         self: Variable object
-
         RETURNS
         ========
         arctan: a new Variable object
-
+        
         EXAMPLES
         =========
         >>> x = Variable(np.pi)
@@ -542,6 +627,7 @@ class Variable:
         RETURNS
         ========
         sinh: a new Variable object
+
 
         EXAMPLES
         =========
@@ -596,7 +682,6 @@ class Variable:
         INPUTS
         =======
         self: Variable object
-
         RETURNS
         ========
         tanh: a new Variable object

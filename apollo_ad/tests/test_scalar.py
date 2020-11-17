@@ -141,3 +141,38 @@ class TestScalar:
         x = Variable(3)
         f = 2 * Variable.tanh(x)
         assert np.round(f.var,4) == 1.9901 and np.round(f.der,4) == [0.0197]
+
+    def test_sin(self):
+        x = Variable(0)
+        f = Variable.sin(x)
+
+        assert f.var == 0.0
+        assert f.der == [1.]
+
+
+    def test_cos(self):
+        x = Variable(0)
+        f = Variable.cos(x)
+        assert f.var == 1.0
+        assert f.der == [-0.]
+
+    def test_arcsin(self):
+        x = Variable(0)
+        f = Variable.arcsin(x)
+        assert f.var == 0.0
+        assert f.der == [1.]
+        # -1<= x <=1
+
+        with pytest.raises(ValueError):
+            x = Variable(-2)
+            f=Variable.arcsin(x)
+
+    def test_arccos(self):
+        x = Variable(0)
+        f = Variable.arccos(x)
+        assert f.var == 0.0
+        assert f.der == [-1.]
+
+        with pytest.raises(ValueError):
+            x = Variable(2)
+            f=Variable.arccos(x)
