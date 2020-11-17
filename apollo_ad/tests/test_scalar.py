@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from ..apollo_ad import Variable
+from apollo_ad import Variable
 
 
 class TestScalar:
@@ -98,15 +98,17 @@ class TestScalar:
         f = Variable.arcsin(x)
         assert f.var == 0.0
         assert f.der == [1.]
+
+        x = Variable(-1.01)
         with pytest.raises(ValueError):
-            x1 = Variable(-1.01)
-            f=Variable.arcsin(x1)
+            f=Variable.arcsin(x)
 
     def test_arccos(self):
         x = Variable(0)
         f = Variable.arccos(x)
         assert f.var == 0.0
         assert f.der == [-1.]
+
+        x = Variable(1.01)
         with pytest.raises(ValueError):
-            x1 = Variable(1.01)
-            f=Variable.arccos(x1)
+            f=Variable.arccos(x)
