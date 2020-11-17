@@ -83,30 +83,30 @@ class TestScalar:
         x = Variable(0)
         f = Variable.sin(x)
 
-        assert f.var == [0.0]
-        assert abs(np.round(f.der, 2)) == [1.0]
+        assert f.var == 0.0
+        assert f.der == [1.]
 
 
     def test_cos(self):
         x = Variable(0)
         f = Variable.cos(x)
-        assert f.var == [1.0]
-        assert abs(f.der) <= 1e-14
+        assert f.var == 1.0
+        assert f.der == [-0.]
 
     def test_arcsin(self):
         x = Variable(0)
         f = Variable.arcsin(x)
-        assert f.var == [0.0]
-        assert f.der == [1.0]
+        assert f.var == 0.0
+        assert f.der == [1.]
         with pytest.raises(ValueError):
-            x = Variable(-1.01)
-            f=Variable.arcsin(x)
+            x1 = Variable(-1.01)
+            f=Variable.arcsin(x1)
 
     def test_arccos(self):
         x = Variable(0)
         f = Variable.arccos(x)
-        assert f.var == [0.0]
-        assert f.der == [-1.0]
+        assert f.var == 0.0
+        assert f.der == [-1.]
         with pytest.raises(ValueError):
-            x = Variable(1.01)
-            f=Variable.arccos(x)
+            x1 = Variable(1.01)
+            f=Variable.arccos(x1)

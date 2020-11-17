@@ -546,7 +546,7 @@ class Variable:
 
 if __name__ == "__main__":
     x = Variable(0)
-    print(Variable.sin(x))
-    print(Variable.cos(x))
-    print(Variable.arcsin(x))
-    print(Variable.arccos(x))
+    print(Variable.sin(x).der)
+    print(Variable.cos(x).der)
+    print(Variable.arcsin(x).der)
+    print(Variable.arccos(x).der)
