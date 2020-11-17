@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from ..apollo_ad import Variable
+import apollo_ad.Variable
 
 
 class TestScalar:
@@ -80,33 +81,33 @@ class TestScalar:
 
 
     def test_sin(self):
-        x = Variable(2)
+        x = Variable(0)
         f = Variable.sin(x)
 
-        assert np.round(f.var, 2) == [0.91]
-        assert abs(np.round(f.der, 2)) == [0.42]
+        assert f.var == [0.0]
+        assert abs(np.round(f.der, 2)) == [1.0]
 
 
     def test_cos(self):
-        x = Variable(np.pi)
-        f = 10 * np.cos(x)
-        assert f.var == [-10]
+        x = Variable(0)
+        f = Variable.cos(x)
+        assert f.var == [1.0]
         assert abs(f.der) <= 1e-14
 
     def test_arcsin(self):
         x = Variable(0)
-        f = np.arcsin(x)
+        f = Variable.arcsin(x)
         assert f.var == [0.0]
         assert f.der == [1.0]
         with pytest.raises(ValueError):
             x = Variable(-1.01)
-            np.arcsin(x)
+            f=Variable.arcsin(x)
 
     def test_arccos(self):
         x = Variable(0)
-        f = np.arccos(x)
-        assert f.var == [1.57079633]
+        f = Variable.arccos(x)
+        assert f.var == [0.0]
         assert f.der == [-1.0]
         with pytest.raises(ValueError):
             x = Variable(1.01)
-            np.arccos(x)
+            f=Variable.arccos(x)

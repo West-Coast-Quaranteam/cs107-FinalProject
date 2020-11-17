@@ -427,12 +427,12 @@ class Variable:
         except AttributeError:
             return np.log(variable)
 
-
+    @staticmethod
     def sin(self):
         """ 
         Returns the sine of Var object.
         
-        Parameters
+        INPUTS
         ==========
         self: Var object
         
@@ -457,7 +457,7 @@ class Variable:
         """ 
         Returns the cosine of Var object.
         
-        Parameters
+        INPUTS
         ==========
         self: Var object
         
@@ -487,7 +487,7 @@ class Variable:
         """ 
         Returns the arcsine of Var object.
         
-        Parameters
+        INPUTS
         ==========
         self: Var object
         
@@ -501,13 +501,13 @@ class Variable:
         """
         var = np.arcsin(self.var)
         der = 1 / np.sqrt(1 - (self.var ** 2))
-        return Variable(var, map(lambda x,f=der: f*x, self.der)) 
+        return Variable(var, der) 
 
     def arccos(self):
         """ 
         Returns the arccosine of Var object.
         
-        Parameters
+        INPUTS
         ==========
         self: Var object
         
@@ -521,7 +521,7 @@ class Variable:
         """
         var = np.arcsin(self.var)
         der = -1 / np.sqrt(1 - (self.var ** 2))
-        return Variable(var, map(lambda x,f=der: f*x, self.der)) 
+        return Variable(var, der)
 
 
 
@@ -545,5 +545,8 @@ class Variable:
 
 
 if __name__ == "__main__":
-    x = Variable(0, 1)
-    print(Variable.log(x))
+    x = Variable(0)
+    print(Variable.sin(x))
+    print(Variable.cos(x))
+    print(Variable.arcsin(x))
+    print(Variable.arccos(x))
