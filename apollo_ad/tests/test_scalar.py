@@ -141,6 +141,7 @@ class TestScalar:
         x = Variable(3)
         f = 2 * Variable.tanh(x)
         assert np.round(f.var,4) == 1.9901 and np.round(f.der,4) == [0.0197]
+
     def test_sin(self):
         x = Variable(0)
         f = Variable.sin(x)

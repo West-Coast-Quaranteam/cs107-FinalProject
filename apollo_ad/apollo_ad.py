@@ -12,7 +12,6 @@ class Variable:
     var : TYPE
         Description
     """
-    
     def __init__(self, var, seed = np.array([1])):
         """Summary
         
@@ -42,20 +41,24 @@ class Variable:
         -------
         var: Variable
             Description
+
         Examples
         -------
         add scalar
         >> x = Variable(3, [1])
         >> x + 3
         Variable(6, 1)
+
         add another variable - X
         >> x = Variable(3, [1])
         >> x + Variable(3, [1])
         Variable(6, [2])
+
         add another variable - Y
         >> x = Variable(3, [1, 0])
         >> x + Variable(3, [0, 1])
         Variable(6, [1, 1])
+
         """
         try:
             return Variable(self.var + other.var, self.der + other.der)
@@ -89,20 +92,24 @@ class Variable:
         -------
         var: Variable
             Description
+
         Examples
         -------
         multiplies scalar
         >> x = Variable(3, [1])
         >> x * 3
         Variable(18, 1)
+
         multiplies another variable - X
         >> x = Variable(3, [1])
         >> x + Variable(3, [1])
         Variable(6, [2])
+
         multiplies another variable - Y
         >> x = Variable(3, [1, 0])
         >> x * Variable(3, [0, 1])
         Variable(9, [3, 3])
+
         """
         try:
             return Variable(self.var * other.var, self.var * other.der + self.der * other.var)
@@ -136,16 +143,19 @@ class Variable:
         -------
         var: Variable
             Description
+
         Examples
         -------
         multiplies scalar
         >> x = Variable(3, [1])
         >> x * 3
         Variable(18, 1)
+
         multiplies another variable - X
         >> x = Variable(3, [1])
         >> x - Variable(3, [1])
         Variable(0, [0])
+
         multiplies another variable - Y
         >> x = Variable(4, [1, 0])
         >> x * Variable(3, [0, 1])
@@ -180,20 +190,24 @@ class Variable:
         -------
         var: Variable
             Description
+
         Examples
         -------
         divides scalar
         >> x = Variable(3, [1])
         >> x / 3
         Variable(1, 1)
+
         divides another variable - X
         >> x = Variable(3, [1])
         >> x / Variable(4, [1])
         Variable(3/4, [1/16])
+
         multiplies another variable - Y
         >> x = Variable(3, [1, 0])
         >> x / Variable(4, [0, 1])
         Variable(3/4, [1/4, -3/16])
+
         """
         try:
             return Variable(self.var / other.var, (self.der * other.var - self.var * other.der)/(other.var**2))
@@ -217,6 +231,7 @@ class Variable:
 
     def __neg__(self):
         """Summary
+
         Examples
         -------
         >> x = Variable(3, [1])
@@ -242,6 +257,7 @@ class Variable:
         -------
         >> Variable(3, [1]) == 3
         False
+
         >> X = Variable(3, 1)
         >> Y = Variable(3, [1])
         >> X == Y
@@ -311,9 +327,11 @@ class Variable:
          =======
          self: Variable object
          exponent: Variable/int/float, to the power of
+
          RETURNS
          ========
          power: a new Variable object after raising `self` to the power of `exponent`
+
          NOTES
          =====
          currently the base has to be > 0 and exponent has to be >= 1.
@@ -344,12 +362,14 @@ class Variable:
          =======
          self: Variable object, to the power of
          other: int/float, base
+
          RETURNS
          ========
          power: a new Variable object after raising `other` to the power of `self`
          NOTES
          =====
          currently do not support when `self` and `other` are both Variable type
+
          EXAMPLES
          =========
          >>> x = Variable(3, 1)
@@ -369,9 +389,11 @@ class Variable:
          INPUTS
          =======
          variable: Variable object/int/float
+
          RETURNS
          ========
          sqrt: a new Variable object after taking square root of `variable`
+
          EXAMPLES
          =========
          >>> x = Variable(3)
@@ -388,9 +410,11 @@ class Variable:
          INPUTS
          =======
          variable: Variable object/int/float
+
          RETURNS
          ========
          sqrt: a new Variable object after raising e to the value
+
          EXAMPLES
          =========
          >>> x = Variable(5)
@@ -411,9 +435,11 @@ class Variable:
          INPUTS
          =======
          variable: Variable object/int/float
+
          RETURNS
          ========
          sqrt: a new Variable object after taking natural log
+
          EXAMPLES
          =========
          >>> x = Variable(3)
@@ -430,8 +456,8 @@ class Variable:
             return np.log(variable)
 
     def sin(self):
-        """ 
-        Returns the sine of Var object.
+
+        """Returns the sine of Var object.
         
         INPUTS
         ==========
@@ -488,6 +514,7 @@ class Variable:
         RETURNS
         ========
         tan: a new Variable object
+
         EXAMPLES
         =========
         >>> x = Variable(np.pi)
@@ -571,6 +598,7 @@ class Variable:
         RETURNS
         ========
         arctan: a new Variable object
+        
         EXAMPLES
         =========
         >>> x = Variable(np.pi)
@@ -591,12 +619,16 @@ class Variable:
 
     def sinh(self):
         """Returns the hyperbolic sin of the Variable object.
+
         INPUTS
         =======
         self: Variable object
+
         RETURNS
         ========
         sinh: a new Variable object
+
+
         EXAMPLES
         =========
         >>> x = Variable(1)
@@ -617,12 +649,15 @@ class Variable:
 
     def cosh(self):
         """Returns the hyperbolic cosine of the Variable object.
+
         INPUTS
         =======
         self: Variable object
+
         RETURNS
         ========
         cosh: a new Variable object
+
         EXAMPLES
         =========
         >>> x = Variable(1)
@@ -643,12 +678,14 @@ class Variable:
 
     def tanh(self):
         """Returns the hyperbolic tangent of the Variable object.
+
         INPUTS
         =======
         self: Variable object
         RETURNS
         ========
         tanh: a new Variable object
+
         EXAMPLES
         =========
         >>> x = Variable(1)
