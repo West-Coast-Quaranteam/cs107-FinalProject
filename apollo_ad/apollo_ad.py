@@ -501,6 +501,11 @@ class Variable:
         """
         var = np.arcsin(self.var)
         der = 1 / np.sqrt(1 - (self.var ** 2))
+        
+        if var>1 or var <-1:
+            raise ValueError('Please input -1 <= x <=1')
+            return False
+
         return Variable(var, der) 
 
     def arccos(self):
@@ -521,6 +526,11 @@ class Variable:
         """
         var = np.arcsin(self.var)
         der = -1 / np.sqrt(1 - (self.var ** 2))
+
+        if var>1 or var <-1:
+            raise ValueError('Please input -1 <= x <=1')
+            return False
+
         return Variable(var, der)
 
 

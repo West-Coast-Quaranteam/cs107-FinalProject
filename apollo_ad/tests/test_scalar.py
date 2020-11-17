@@ -98,7 +98,7 @@ class TestScalar:
         f = Variable.arcsin(x)
         assert f.var == 0.0
         assert f.der == [1.]
-
+        # -1<= x <=1
         x = Variable(-1.01)
         with pytest.raises(ValueError):
             f=Variable.arcsin(x)
