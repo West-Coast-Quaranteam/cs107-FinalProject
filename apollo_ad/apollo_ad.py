@@ -499,12 +499,13 @@ class Variable:
         ========= 
 
         """
-        var = np.arcsin(self.var)
-        der = 1 / np.sqrt(1 - (self.var ** 2))
-        
-        if var>1 or var <-1:
+        if self.var>1 or self.var <-1:
             raise ValueError('Please input -1 <= x <=1')
             return False
+        else:
+            var = np.arcsin(self.var)
+            der = 1 / np.sqrt(1 - (self.var ** 2))
+
 
         return Variable(var, der) 
 
@@ -524,13 +525,13 @@ class Variable:
         ========= 
 
         """
-        var = np.arcsin(self.var)
-        der = -1 / np.sqrt(1 - (self.var ** 2))
 
-        if var>1 or var <-1:
+        if self.var>1 or self.var <-1:
             raise ValueError('Please input -1 <= x <=1')
             return False
-
+        else:
+            var = np.arcsin(self.var)
+            der = -1 / np.sqrt(1 - (self.var ** 2))
         return Variable(var, der)
 
 
