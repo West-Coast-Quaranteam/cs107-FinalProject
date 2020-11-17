@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from ..apollo_ad import Variable
+from ..apollo_ad import *
 
 
 class TestScalar:
@@ -12,6 +12,14 @@ class TestScalar:
 
         assert y.var == 5 ** 3
         assert y.der == 3 * (5 ** 2)
+
+    def test_pow_var(self):
+        # test Variable raise to a Variable
+        x = Variable(2)
+        y = x ** (3 * x)
+
+        assert y.var == 2 ** 6
+        assert y.der == 192 + 192 * np.log(2)
 
     def test_pow_imaginary(self):
         # test pow when base < 0 and exponent < 1
@@ -79,49 +87,6 @@ class TestScalar:
             y = Variable.log(x)
 
 
-
-
-
-
-    def test_sin(self):
-        x = Variable(0)
-        f = Variable.sin(x)
-
-        assert f.var == 0.0
-        assert f.der == [1.]
-
-
-    def test_cos(self):
-        x = Variable(0)
-        f = Variable.cos(x)
-        assert f.var == 1.0
-        assert f.der == [-0.]
-
-    def test_arcsin(self):
-        x = Variable(0)
-        f = Variable.arcsin(x)
-        assert f.var == 0.0
-        assert f.der == [1.]
-        # -1<= x <=1
-
-        with pytest.raises(ValueError):
-            x = Variable(-2)
-            f=Variable.arcsin(x)
-
-    def test_arccos(self):
-        x = Variable(0)
-        f = Variable.arccos(x)
-        assert f.var == 0.0
-        assert f.der == [-1.]
-
-        with pytest.raises(ValueError):
-            x = Variable(2)
-            f=Variable.arccos(x)
-
-
-
-
-
     def test_tangent_function(self):
 
         x = Variable(np.pi)
@@ -176,3 +141,37 @@ class TestScalar:
         x = Variable(3)
         f = 2 * Variable.tanh(x)
         assert np.round(f.var,4) == 1.9901 and np.round(f.der,4) == [0.0197]
+    def test_sin(self):
+        x = Variable(0)
+        f = Variable.sin(x)
+
+        assert f.var == 0.0
+        assert f.der == [1.]
+
+
+    def test_cos(self):
+        x = Variable(0)
+        f = Variable.cos(x)
+        assert f.var == 1.0
+        assert f.der == [-0.]
+
+    def test_arcsin(self):
+        x = Variable(0)
+        f = Variable.arcsin(x)
+        assert f.var == 0.0
+        assert f.der == [1.]
+        # -1<= x <=1
+
+        with pytest.raises(ValueError):
+            x = Variable(-2)
+            f=Variable.arcsin(x)
+
+    def test_arccos(self):
+        x = Variable(0)
+        f = Variable.arccos(x)
+        assert f.var == 0.0
+        assert f.der == [-1.]
+
+        with pytest.raises(ValueError):
+            x = Variable(2)
+            f=Variable.arccos(x)

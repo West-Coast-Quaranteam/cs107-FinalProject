@@ -1,4 +1,3 @@
-
 import numpy as np
 
 
@@ -430,8 +429,6 @@ class Variable:
         except AttributeError:
             return np.log(variable)
 
-
-    @staticmethod
     def sin(self):
         """ 
         Returns the sine of Var object.
@@ -483,66 +480,6 @@ class Variable:
 
         return Variable(var, der)
 
-
-
-    def arcsin(self):
-        """ 
-        Returns the arcsine of Var object.
-        
-        INPUTS
-        ==========
-        self: Var object
-        
-        Returns
-        ========= 
-        output:  arcsine of self
-        
-        Examples
-        ========= 
-
-        """
-        if self.var>1 or self.var <-1:
-            raise ValueError('Please input -1 <= x <=1')
-            return False
-        else:
-            var = np.arcsin(self.var)
-            der = 1 / np.sqrt(1 - (self.var ** 2))
-
-
-        return Variable(var, der) 
-
-
-
-
-    def arccos(self):
-        """ 
-        Returns the arccosine of Var object.
-        
-        INPUTS
-        ==========
-        self: Var object
-        
-        Returns
-        ========= 
-        output: arccosine of self
-        
-        Examples
-        ========= 
-
-        """
-
-        if self.var>1 or self.var <-1:
-            raise ValueError('Please input -1 <= x <=1')
-            return False
-        else:
-            var = np.arcsin(self.var)
-            der = -1 / np.sqrt(1 - (self.var ** 2))
-        return Variable(var, der)
-
-
-
-
-
     def tan(self):
         """Returns the tangent of the Variable object.
         INPUTS
@@ -573,6 +510,58 @@ class Variable:
         tan = Variable(new_var, new_der)
 
         return tan
+
+    def arcsin(self):
+        """ 
+        Returns the arcsine of Var object.
+        
+        INPUTS
+        ==========
+        self: Var object
+        
+        Returns
+        ========= 
+        output:  arcsine of self
+        
+        Examples
+        ========= 
+
+        """
+        if self.var>1 or self.var <-1:
+            raise ValueError('Please input -1 <= x <=1')
+            return False
+        else:
+            var = np.arcsin(self.var)
+            der = 1 / np.sqrt(1 - (self.var ** 2))
+
+
+        return Variable(var, der) 
+
+
+    def arccos(self):
+        """ 
+        Returns the arccosine of Var object.
+        
+        INPUTS
+        ==========
+        self: Var object
+        
+        Returns
+        ========= 
+        output: arccosine of self
+        
+        Examples
+        ========= 
+
+        """
+
+        if self.var>1 or self.var <-1:
+            raise ValueError('Please input -1 <= x <=1')
+            return False
+        else:
+            var = np.arcsin(self.var)
+            der = -1 / np.sqrt(1 - (self.var ** 2))
+        return Variable(var, der)
 
     def arctan(self):
         """Returns the arctangent of the Variable object.
@@ -683,12 +672,3 @@ class Variable:
 
     def __str__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
-
-
-    def __repr__(self):
-        return 'varue: ' + str(self.var) + ' , Der: ' + str(self.der) 
-
-    def __str__(self):
-        return 'varue: ' + str(self.var) + ' , Der: ' + str(self.der) 
-
-
