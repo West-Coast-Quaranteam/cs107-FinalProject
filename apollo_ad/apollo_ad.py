@@ -304,36 +304,40 @@ class Variable:
     def __abs__(self):
         var = abs(self.var)
         der = np.abs(self.der)
-        return Variable(var, der)
-
+        return Variable(var, der) 
 
     def __pow__(self, exponent):
         """Returns the power of the Variable object to the exponent.
          INPUTS
          =======
          self: Variable object
-         exponent: int/float, to the power of
+         exponent: Variable/int/float, to the power of
          RETURNS
          ========
          power: a new Variable object after raising `self` to the power of `exponent`
          NOTES
          =====
-         currently do not support when `self` and `other` are both Variable type
-         self has to be positive, and exponent has to be >= 1. Don't support imaginary numbers
+         currently the base has to be > 0 and exponent has to be >= 1.
+         complex numbers not supported
          EXAMPLES
          =========
          >>> x = Variable(3, 1)
          >>> x ** 2.0
          Variable(9, [6])
          """
-        # `self` ** other
-        # check domain, current
-        if self.var < 0 and exponent < 1:
-            raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
-
-        var = self.var ** exponent
-        der = self.der * exponent * (self.var ** (exponent - 1))
-        return Variable(var, der)
+        # `self` ^ other
+        # check domain
+        if self.var <= 0 and exponent < 1:
+            raise ValueError('Base has to be > 0, and the exponent has to be >= 1')
+        try:
+            var = self.var ** exponent.var
+            der = exponent.var * (self.var ** (exponent.var - 1)) * self.der + \
+                (self.var ** exponent.var) * np.log(self.var) * exponent.der
+            return Variable(var, der)
+        except AttributeError:
+            var = self.var ** exponent
+            der = self.der * exponent * (self.var ** (exponent - 1))
+            return Variable(var, der)
 
     def __rpow__(self, other):
         """Returns the power of the `other` object to `self`.
@@ -419,13 +423,13 @@ class Variable:
          """
         if variable <= 0:
             raise ValueError('Please input a positive number')
-            return False
         try:
             var = np.log(variable.var)
             der = (1.0 / variable.var) * variable.der
             return Variable(var, der)
         except AttributeError:
             return np.log(variable)
+
 
     @staticmethod
     def sin(self):
@@ -452,6 +456,7 @@ class Variable:
             der = None
 
         return Variable(var, der)
+
 
     def cos(self):
         """ 
@@ -480,9 +485,6 @@ class Variable:
 
 
 
-    def tan(self):
-        raise NotImplementedError
-
     def arcsin(self):
         """ 
         Returns the arcsine of Var object.
@@ -508,6 +510,9 @@ class Variable:
 
 
         return Variable(var, der) 
+
+
+
 
     def arccos(self):
         """ 
@@ -536,17 +541,149 @@ class Variable:
 
 
 
+
+
+    def tan(self):
+        """Returns the tangent of the Variable object.
+        INPUTS
+        =======
+        self: Variable object
+        RETURNS
+        ========
+        tan: a new Variable object
+        EXAMPLES
+        =========
+        >>> x = Variable(np.pi)
+        >>> Variable.tan(x)
+        Variable(-1.22464679915e-16, [ 1.])
+        """
+
+        # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
+        # would typically do try-except, but due to machine precision this won't work
+        check_domain = self.var % np.pi == (np.pi/2)
+        if check_domain:
+            raise ValueError(
+                'Cannot take the tangent of this value since it is a multiple of pi/2 + (pi * n), where n is a positive integer')
+
+        new_var = np.tan(self.var)
+
+        tan_derivative = 1 / np.power(np.cos(self.var), 2)
+        new_der = self.der * tan_derivative
+
+        tan = Variable(new_var, new_der)
+
+        return tan
+
     def arctan(self):
-        raise NotImplementedError
+        """Returns the arctangent of the Variable object.
+        INPUTS
+        =======
+        self: Variable object
+        RETURNS
+        ========
+        arctan: a new Variable object
+        EXAMPLES
+        =========
+        >>> x = Variable(np.pi)
+        >>> Variable.arctan(x)
+        Variable(1.26262725568, [ 0.09199967])
+        """
+
+        # no need to check for a value error
+
+        new_var = np.arctan(self.var)
+
+        arctan_derivative = 1 / (1 + np.power(self.var, 2))
+        new_der = self.der * arctan_derivative
+
+        arctan = Variable(new_var, new_der)
+
+        return arctan
 
     def sinh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic sin of the Variable object.
+        INPUTS
+        =======
+        self: Variable object
+        RETURNS
+        ========
+        sinh: a new Variable object
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.sinh(x)
+        Variable(1.17520119364, [ 1.54308063])
+        """
+
+        # don't need to check for domain values
+
+        new_var = np.sinh(self.var)
+
+        sinh_derivative = np.cosh(self.var)
+        new_der = self.der * sinh_derivative
+
+        sinh = Variable(new_var, new_der)
+
+        return sinh
 
     def cosh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic cosine of the Variable object.
+        INPUTS
+        =======
+        self: Variable object
+        RETURNS
+        ========
+        cosh: a new Variable object
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.cosh(x)
+        Variable(1.54308063482, [ 1.17520119])
+        """
+
+        # don't need to check for domain values
+
+        new_var = np.cosh(self.var)
+
+        cosh_derivative = np.sinh(self.var)
+        new_der = self.der * cosh_derivative
+
+        cosh = Variable(new_var, new_der)
+
+        return cosh
 
     def tanh(self):
-        raise NotImplementedError
+        """Returns the hyperbolic tangent of the Variable object.
+        INPUTS
+        =======
+        self: Variable object
+        RETURNS
+        ========
+        tanh: a new Variable object
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.tanh(x)
+        Variable(0.761594155956 , [ 0.41997434])
+        """
+
+        # don't need to check for domain values
+
+        new_var = np.tanh(self.var)
+
+        tanh_derivative = 1 / np.power(np.cosh(self.var), 2)
+        new_der = self.der * tanh_derivative
+
+        tanh = Variable(new_var, new_der)
+
+        return tanh
+
+    def __repr__(self):
+        return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
+
+    def __str__(self):
+        return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
+
 
     def __repr__(self):
         return 'varue: ' + str(self.var) + ' , Der: ' + str(self.der) 
@@ -555,9 +692,3 @@ class Variable:
         return 'varue: ' + str(self.var) + ' , Der: ' + str(self.der) 
 
 
-if __name__ == "__main__":
-    x = Variable(0)
-    print(Variable.sin(x))
-    print(Variable.cos(x))
-    print(Variable.arcsin(x))
-    print(Variable.arccos(x))

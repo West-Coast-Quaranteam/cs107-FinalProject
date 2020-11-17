@@ -79,6 +79,10 @@ class TestScalar:
             y = Variable.log(x)
 
 
+
+
+
+
     def test_sin(self):
         x = Variable(0)
         f = Variable.sin(x)
@@ -113,3 +117,62 @@ class TestScalar:
         with pytest.raises(ValueError):
             x = Variable(2)
             f=Variable.arccos(x)
+
+
+
+
+
+    def test_tangent_function(self):
+
+        x = Variable(np.pi)
+        f = Variable.tan(x)
+
+        # However, if you specify a message with the assertion like this:
+        # assert a % 2 == 0, "value was odd, should be even"
+        # then no assertion introspection takes places at all and the message will be simply shown in the traceback.
+        assert f.der == [1]
+
+        x = Variable(3*np.pi/2)
+        with pytest.raises(ValueError):
+            f = Variable.tan(x)
+
+        x = Variable(2)
+        f = 3 * Variable.tan(x)
+
+        assert f.var == 3 * np.tan(2) and np.round(f.der,4) == [17.3232]
+
+        x = Variable(np.pi)
+        f = Variable.tan(x) * Variable.tan(x)
+
+        # I'm not sure if this should throw an error or not
+        # when using AutoED this produces [-2048.537524357708], but the current value returned for us is [-2048.53752436]
+        assert np.round(f.der,5) == [0]
+
+
+
+
+    # can use these function below to run the code manually rather than with pytest
+    def test_arctangent_function(self):
+        x = Variable(2)
+        f = Variable.arctan(x)
+
+        assert f.der == [.2]
+
+
+    def test_sinh_function(self):
+        x = Variable(2)
+        f = 2 * Variable.sinh(x)
+
+        assert np.round(f.der,4) == [7.5244]
+
+
+    def test_cosh_function(self):
+        x = Variable(4)
+        f = 3 * Variable.cosh(x)
+        assert np.round(f.var,4) == 81.9247
+
+
+    def test_tanh_function(self):
+        x = Variable(3)
+        f = 2 * Variable.tanh(x)
+        assert np.round(f.var,4) == 1.9901 and np.round(f.der,4) == [0.0197]
