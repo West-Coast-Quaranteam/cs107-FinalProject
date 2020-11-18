@@ -111,9 +111,12 @@ class TestScalar:
         x = Variable(np.pi)
         f = Variable.tan(x) * Variable.tan(x)
 
-        # I'm not sure if this should throw an error or not
-        # when using AutoED this produces [-2048.537524357708], but the current value returned for us is [-2048.53752436]
         assert np.round(f.der,5) == [0]
+
+        # checking a constant
+        assert Variable.tan(3) == np.tan(3)
+
+
 
 
 
@@ -123,26 +126,40 @@ class TestScalar:
         x = Variable(2)
         f = Variable.arctan(x)
 
-        assert f.der == [.2]
+        assert f.der == [.2] and np.round(f.var,4) == 1.1071
+
+        # check a constant
+        assert Variable.arctan(3) == np.arctan(3)
 
 
     def test_sinh_function(self):
         x = Variable(2)
         f = 2 * Variable.sinh(x)
 
-        assert np.round(f.der,4) == [7.5244]
+        assert np.round(f.der,4) == [7.5244] and np.round(f.var,4) == 7.2537
+
+        # check a constant
+        assert Variable.sinh(3) == np.sinh(3)
 
 
     def test_cosh_function(self):
         x = Variable(4)
         f = 3 * Variable.cosh(x)
-        assert np.round(f.var,4) == 81.9247
+        assert np.round(f.var,4) == 81.9247 and np.round(f.der,4) == [81.8698]
+
+        # check a constant
+        assert Variable.cosh(3) == np.cosh(3)
 
 
     def test_tanh_function(self):
         x = Variable(3)
         f = 2 * Variable.tanh(x)
         assert np.round(f.var,4) == 1.9901 and np.round(f.der,4) == [0.0197]
+
+        # checking a constant
+        assert Variable.tanh(3) == np.tanh(3)
+
+
 
     def test_sin(self):
         x = Variable(0)

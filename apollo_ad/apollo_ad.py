@@ -525,19 +525,23 @@ class Variable:
 
         # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
         # would typically do try-except, but due to machine precision this won't work
-        check_domain = variable.var % np.pi == (np.pi/2)
-        if check_domain:
-            raise ValueError(
-                'Cannot take the tangent of this value since it is a multiple of pi/2 + (pi * n), where n is a positive integer')
+        try:
+            check_domain = variable.var % np.pi == (np.pi/2)
+            if check_domain:
+                raise ValueError(
+                    'Cannot take the tangent of this value since it is a multiple of pi/2 + (pi * n), where n is a positive integer')
 
-        new_var = np.tan(variable.var)
+            new_var = np.tan(variable.var)
 
-        tan_derivative = 1 / np.power(np.cos(variable.var), 2)
-        new_der = variable.der * tan_derivative
+            tan_derivative = 1 / np.power(np.cos(variable.var), 2)
+            new_der = variable.der * tan_derivative
 
-        tan = Variable(new_var, new_der)
+            tan = Variable(new_var, new_der)
 
-        return tan
+            return tan
+
+        except AttributeError:
+            return np.tan(variable)
 
     def arcsin(self):
         """ 
@@ -609,15 +613,18 @@ class Variable:
         """
 
         # no need to check for a value error
+        try:
+            new_var = np.arctan(variable.var)
 
-        new_var = np.arctan(variable.var)
+            arctan_derivative = 1 / (1 + np.power(variable.var, 2))
+            new_der = variable.der * arctan_derivative
 
-        arctan_derivative = 1 / (1 + np.power(variable.var, 2))
-        new_der = variable.der * arctan_derivative
+            arctan = Variable(new_var, new_der)
 
-        arctan = Variable(new_var, new_der)
+            return arctan
 
-        return arctan
+        except AttributeError:
+                return np.arctan(variable)
 
     @staticmethod
     def sinh(variable):
@@ -640,15 +647,18 @@ class Variable:
         """
 
         # don't need to check for domain values
+        try:
+            new_var = np.sinh(variable.var)
 
-        new_var = np.sinh(variable.var)
+            sinh_derivative = np.cosh(variable.var)
+            new_der = variable.der * sinh_derivative
 
-        sinh_derivative = np.cosh(variable.var)
-        new_der = variable.der * sinh_derivative
+            sinh = Variable(new_var, new_der)
 
-        sinh = Variable(new_var, new_der)
+            return sinh
 
-        return sinh
+        except AttributeError:
+            return np.sinh(variable)
 
     @staticmethod
     def cosh(variable):
@@ -671,14 +681,18 @@ class Variable:
 
         # don't need to check for domain values
 
-        new_var = np.cosh(variable.var)
+        try:
+            new_var = np.cosh(variable.var)
 
-        cosh_derivative = np.sinh(variable.var)
-        new_der = variable.der * cosh_derivative
+            cosh_derivative = np.sinh(variable.var)
+            new_der = variable.der * cosh_derivative
 
-        cosh = Variable(new_var, new_der)
+            cosh = Variable(new_var, new_der)
 
-        return cosh
+            return cosh
+
+        except AttributeError:
+            return np.cosh(variable)
 
     @staticmethod
     def tanh(variable):
@@ -699,15 +713,18 @@ class Variable:
         """
 
         # don't need to check for domain values
+        try:
+            new_var = np.tanh(variable.var)
 
-        new_var = np.tanh(variable.var)
+            tanh_derivative = 1 / np.power(np.cosh(variable.var), 2)
+            new_der = variable.der * tanh_derivative
 
-        tanh_derivative = 1 / np.power(np.cosh(variable.var), 2)
-        new_der = variable.der * tanh_derivative
+            tanh = Variable(new_var, new_der)
+            return tanh
 
-        tanh = Variable(new_var, new_der)
+        except AttributeError:
+            return np.tanh(variable)
 
-        return tanh
 
     def __repr__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
