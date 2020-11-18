@@ -89,6 +89,8 @@ class TestScalar:
 
     def test_tangent_function(self):
 
+        
+
         x = Variable(np.pi)
         f = Variable.tan(x)
 

@@ -506,7 +506,8 @@ class Variable:
 
         return Variable(var, der)
 
-    def tan(self):
+    @staticmethod
+    def tan(variable):
         """Returns the tangent of the Variable object.
         INPUTS
         =======
@@ -524,15 +525,15 @@ class Variable:
 
         # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
         # would typically do try-except, but due to machine precision this won't work
-        check_domain = self.var % np.pi == (np.pi/2)
+        check_domain = variable.var % np.pi == (np.pi/2)
         if check_domain:
             raise ValueError(
                 'Cannot take the tangent of this value since it is a multiple of pi/2 + (pi * n), where n is a positive integer')
 
-        new_var = np.tan(self.var)
+        new_var = np.tan(variable.var)
 
-        tan_derivative = 1 / np.power(np.cos(self.var), 2)
-        new_der = self.der * tan_derivative
+        tan_derivative = 1 / np.power(np.cos(variable.var), 2)
+        new_der = variable.der * tan_derivative
 
         tan = Variable(new_var, new_der)
 
@@ -556,7 +557,7 @@ class Variable:
         """
         if self.var>1 or self.var <-1:
             raise ValueError('Please input -1 <= x <=1')
-            return False
+
         else:
             var = np.arcsin(self.var)
             der = 1 / np.sqrt(1 - (self.var ** 2))
@@ -584,13 +585,14 @@ class Variable:
 
         if self.var>1 or self.var <-1:
             raise ValueError('Please input -1 <= x <=1')
-            return False
+
         else:
             var = np.arcsin(self.var)
             der = -1 / np.sqrt(1 - (self.var ** 2))
         return Variable(var, der)
 
-    def arctan(self):
+    @staticmethod
+    def arctan(variable):
         """Returns the arctangent of the Variable object.
         INPUTS
         =======
@@ -608,16 +610,17 @@ class Variable:
 
         # no need to check for a value error
 
-        new_var = np.arctan(self.var)
+        new_var = np.arctan(variable.var)
 
-        arctan_derivative = 1 / (1 + np.power(self.var, 2))
-        new_der = self.der * arctan_derivative
+        arctan_derivative = 1 / (1 + np.power(variable.var, 2))
+        new_der = variable.der * arctan_derivative
 
         arctan = Variable(new_var, new_der)
 
         return arctan
 
-    def sinh(self):
+    @staticmethod
+    def sinh(variable):
         """Returns the hyperbolic sin of the Variable object.
 
         INPUTS
@@ -638,16 +641,17 @@ class Variable:
 
         # don't need to check for domain values
 
-        new_var = np.sinh(self.var)
+        new_var = np.sinh(variable.var)
 
-        sinh_derivative = np.cosh(self.var)
-        new_der = self.der * sinh_derivative
+        sinh_derivative = np.cosh(variable.var)
+        new_der = variable.der * sinh_derivative
 
         sinh = Variable(new_var, new_der)
 
         return sinh
 
-    def cosh(self):
+    @staticmethod
+    def cosh(variable):
         """Returns the hyperbolic cosine of the Variable object.
 
         INPUTS
@@ -667,16 +671,17 @@ class Variable:
 
         # don't need to check for domain values
 
-        new_var = np.cosh(self.var)
+        new_var = np.cosh(variable.var)
 
-        cosh_derivative = np.sinh(self.var)
-        new_der = self.der * cosh_derivative
+        cosh_derivative = np.sinh(variable.var)
+        new_der = variable.der * cosh_derivative
 
         cosh = Variable(new_var, new_der)
 
         return cosh
 
-    def tanh(self):
+    @staticmethod
+    def tanh(variable):
         """Returns the hyperbolic tangent of the Variable object.
 
         INPUTS
@@ -695,10 +700,10 @@ class Variable:
 
         # don't need to check for domain values
 
-        new_var = np.tanh(self.var)
+        new_var = np.tanh(variable.var)
 
-        tanh_derivative = 1 / np.power(np.cosh(self.var), 2)
-        new_der = self.der * tanh_derivative
+        tanh_derivative = 1 / np.power(np.cosh(variable.var), 2)
+        new_der = variable.der * tanh_derivative
 
         tanh = Variable(new_var, new_der)
 
@@ -709,3 +714,8 @@ class Variable:
 
     def __str__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
+
+if __name__=='__main__':
+    x = Variable(4)
+    print(Variable.sqrt(x))
+    print(np.sqrt(4))
