@@ -1,3 +1,12 @@
 language: python
+python:
+    - "3.6"
+before_install:
+    - pip install pytest pytest-cov
+    - pip install codecov
 script:
-  - pytest
+    - pytest --cov=./
+env:
+    - CODECOV_TOKEN="d1d8761a-39e8-4422-a172-aaf78a9f1c1f" # need this since we have a private repository
+after_success:
+    - codecov
