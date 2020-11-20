@@ -626,7 +626,8 @@ class Variable:
         except AttributeError:
             return np.log(variable)
 
-    def sin(self):
+    @staticmethod
+    def sin(variable):
 
         """Returns the sine of Var object.
         
@@ -642,17 +643,18 @@ class Variable:
         ========= 
 
         """
-        var = np.sin(self.var)
-        if len(self.der.shape):
-            b = np.cos(self.var)
-            der = self.der * b
-        else:
-            der = None
+        try:
+            var = np.sin(variable.var)
+            b = np.cos(variable.var)
+            der = variable.der * b
+            return Variable(var, der)
+        except AttributeError:
+            return np.sin(variable)
 
-        return Variable(var, der)
+        
 
-
-    def cos(self):
+    @staticmethod
+    def cos(variable):
         """ 
         Returns the cosine of Var object.
         
@@ -668,14 +670,14 @@ class Variable:
         ========= 
 
         """
-        var = np.cos(self.var)
-        if len(self.der.shape):
-            b = -np.sin(self.var)
-            der = self.der * b
-        else:
-            der = None
+        try:
+            var = np.cos(variable.var)
+            b = -np.sin(variable.var)
+            der = variable.der * b
 
-        return Variable(var, der)
+            return Variable(var, der)
+        except AttributeError:
+            return np.cos(variable)
 
     @staticmethod
     def tan(variable):
