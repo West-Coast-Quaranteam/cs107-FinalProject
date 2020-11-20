@@ -5,6 +5,195 @@ from ..apollo_ad import *
 
 class TestScalar:
 
+    def test_add_radd(self):
+        x = Variable(3, [1])
+        y = x + 3
+
+        assert y.var == 6
+        assert y.der == np.array([1])
+        
+        x = Variable(3, [1])
+        y = x + Variable(3, [1])
+
+        assert y.var == 6
+        assert y.der == np.array([2])
+
+        x = Variable(3, [1, 0])
+        y = x + Variable(3, [0, 1])
+
+        assert y.var == 6
+        assert np.array_equal(y.der, np.array([1, 1]))
+
+        x = Variable(3, [1, 0])
+        y = Variable(3, [0, 1]) + x
+
+        assert y.var == 6
+        assert np.array_equal(y.der, np.array([1, 1]))
+
+    def test_mul_rmul(self):
+        x = Variable(3, [1])
+        y = x * 3
+
+        assert y.var == 9
+        assert y.der == np.array([3])
+
+        x = Variable(3, [1])
+        y = x * Variable(3, [1])
+
+        assert y.var == 9
+        assert y.der == np.array([6])
+
+        x = Variable(3, [1, 0])
+        y = x * Variable(3, [0, 1]) 
+
+        assert y.var == 9
+        assert np.array_equal(y.der, np.array([3, 3]))
+
+        x = Variable(3, [1, 0])
+        y = Variable(3, [0, 1]) * x
+
+        assert y.var == 9
+        assert np.array_equal(y.der, np.array([3, 3]))
+    
+    def test_sub_rsub(self):
+        x = Variable(3, [1])
+        y = x - 3
+
+        assert y.var == 0
+        assert y.der == np.array([1])
+
+        x = Variable(3, [1])
+        y = x - Variable(3, [1])
+
+        assert y.var == 0
+        assert y.der == np.array([0])
+
+        x = Variable(4, [1, 0])
+        y = x - Variable(3, [0, 1]) 
+
+        assert y.var == 1
+        assert np.array_equal(y.der, np.array([1, -1]))
+
+        x = Variable(3, [1])
+        y = 3 - x
+
+        assert y.var == 0
+        assert y.der == np.array([-1])
+
+        x = Variable(3, [1])
+        y = Variable(3, [1]) - x
+
+        assert y.var == 0
+        assert y.der == np.array([0])
+
+        x = Variable(3, [1, 0])
+        y = Variable(4, [0, 1]) - x
+
+        assert y.var == 1
+        assert np.array_equal(y.der, np.array([-1, 1]))
+
+    def test_truediv_rtruediv(self):
+        x = Variable(3, [1])
+        y = x / 3
+
+        assert y.var == 1
+        assert y.der == np.array([1/3])
+
+        x = Variable(3, [1])
+        y = x / Variable(4, [1])
+
+        assert y.var == 3/4
+        assert y.der == np.array([1/16])
+
+        x = Variable(3, [1, 0])
+        y = x / Variable(4, [0, 1]) 
+
+        assert y.var == 3/4
+        assert np.array_equal(y.der, np.array([1/4, -3/16]))
+
+        x = Variable(3, [1])
+        y = 2 / x 
+
+        assert y.var == 2/3
+        assert y.der == np.array([-2/9])
+
+        x = Variable(4, [1])
+        y = Variable(3, [1]) / x
+
+        assert y.var == 3/4
+        assert y.der == np.array([1/16])
+
+        x = Variable(4, [0, 1])
+        y = Variable(3, [1, 0]) / x
+
+        assert y.var == 3/4
+        assert np.array_equal(y.der, np.array([1/4, -3/16]))
+
+    def test_neg(self):
+        x = Variable(3, [1])
+        y = -x
+        assert y.var == -3
+        assert y.der == np.array([-1])
+
+    def test_lt(self):
+        X = Variable(3, 1)
+        Y = Variable(4, [1])
+        flag = (X < Y)
+        assert flag == True
+
+        flag = (Variable(3, [1]) < 3)
+        assert flag == False
+        
+    def test_eq(self):
+        X = Variable(3, 1)
+        Y = Variable(3, [1])
+        flag = (X == Y)
+        assert flag == True
+
+        flag = (Variable(3, [1]) == 3)
+        assert flag == False
+
+    def test_ne(self):
+        X = Variable(3, 1)
+        Y = Variable(3, [1])
+        flag = (X != Y)
+        assert flag == False
+
+        flag = (Variable(3, [1]) != 3)
+        assert flag == True
+
+    def test_le(self):
+        X = Variable(3, 1)
+        Y = Variable(4, [1])
+        flag = (X < Y)
+        assert flag == True
+
+        flag = (Variable(3, [1]) < 3)
+        assert flag == False
+
+    def test_gt(self):
+        X = Variable(3, 1)
+        Y = Variable(4, [1])
+        flag = (X > Y)
+        assert flag == False
+
+        flag = (Variable(3, [1]) > 3)
+        assert flag == False
+
+    def test_ge(self):
+        X = Variable(3, 1)
+        Y = Variable(4, [1])
+        flag = (X >= Y)
+        assert flag == False
+
+        flag = (Variable(3, [1]) >= 3)
+        assert flag == True
+
+    def test_abs(self):
+        y = abs(Variable(-3, [-1]))
+        assert y.var == 3
+        assert y.der == np.array([1])
+
     def test_pow(self):
         # test Variable raise to a constant
         x = Variable(5)

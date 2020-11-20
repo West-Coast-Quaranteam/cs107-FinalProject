@@ -61,7 +61,7 @@ class Variable:
          add scalar
          >> x = Variable(3, [1])
          >> x + 3
-         Variable(6, 1)
+         Variable(6, [1])
 
          add another variable - X
          >> x = Variable(3, [1])
@@ -249,7 +249,7 @@ class Variable:
          divides scalar
          >> x = Variable(3, [1])
          >> x / 3
-         Variable(1, 1)
+         Variable(1, 1/3)
 
          divides another variable - X
          >> x = Variable(3, [1])
@@ -267,7 +267,7 @@ class Variable:
             return Variable(self.var / other, self.der / other)
 
     def __rtruediv__(self, other):
-       """Dunder method for being divided by another variable or scalar/vector
+        """Dunder method for being divided by another variable or scalar/vector
          INPUTS
          =======
          self: Variable object
@@ -474,7 +474,7 @@ class Variable:
             return self.var >= other
 
     def __abs__(self):
-         """Dunder method for absolute value
+        """Dunder method for absolute value
          INPUTS
          =======
          self: Variable object
