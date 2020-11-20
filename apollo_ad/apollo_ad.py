@@ -13,15 +13,31 @@ class Variable:
         Description
     """
     def __init__(self, var, seed = np.array([1])):
-        """Summary
-        
-        Parameters
-        ----------
-        var : TYPE
-            Description
-        seed : int, optional
-            Description
-        """
+        """Initiate a auto diff variable.
+         INPUTS
+         =======
+         self: Variable object
+         var: float/int, the value of this variable
+         seed: int/list/array, the seed vector (derivative from the parents)
+
+         RETURNS
+         ========
+
+         EXAMPLES
+         =========
+         # single var with der int
+         >>> x = Variable(3, 1)
+         Variable(3, [1])
+
+         # single var with der list
+         >>> x = Variable(3, [1])
+         Variable(3, [1])
+
+         # multiple vars
+         >>> x = Variable(3, [1, 0])
+         Variable(3, [1, 0])
+
+         """
         self.var = var
         if isinstance(seed, (int, float)):
             seed = np.array([seed])
@@ -30,35 +46,32 @@ class Variable:
         self.der = seed
 
     def __add__(self, other):
-        """Summary
+        """Dunder method for adding another variable or scalar/vector
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to add on self.var.
         
-        Parameters
-        ----------
-        other : int/float, Variable
-            Description
-        
-        Returns
-        -------
-        var: Variable
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable with `other` added.
+            
+         EXAMPLES
+         =========
+         add scalar
+         >> x = Variable(3, [1])
+         >> x + 3
+         Variable(6, 1)
 
-        Examples
-        -------
-        add scalar
-        >> x = Variable(3, [1])
-        >> x + 3
-        Variable(6, 1)
+         add another variable - X
+         >> x = Variable(3, [1])
+         >> x + Variable(3, [1])
+         Variable(6, [2])
 
-        add another variable - X
-        >> x = Variable(3, [1])
-        >> x + Variable(3, [1])
-        Variable(6, [2])
-
-        add another variable - Y
-        >> x = Variable(3, [1, 0])
-        >> x + Variable(3, [0, 1])
-        Variable(6, [1, 1])
-
+         add another variable - Y
+         >> x = Variable(3, [1, 0])
+         >> x + Variable(3, [0, 1])
+         Variable(6, [1, 1])
         """
         try:
             return Variable(self.var + other.var, self.der + other.der)
@@ -66,49 +79,62 @@ class Variable:
             return Variable(self.var + other, self.der)
 
     def __radd__(self, other):
-        """Summary
+        """Dunder method for adding another variable or scalar/vector from left
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to add on self.var.
         
-        Parameters
-        ----------
-        other : TYPE
-            Description
-        
-        Returns
-        -------
-        TYPE
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable with `other` added.
+            
+         EXAMPLES
+         =========
+         add scalar
+         >> x = Variable(3, [1])
+         >> 3 + x
+         Variable(6, 1)
+
+         add another variable - X
+         >> x = Variable(3, [1])
+         >> Variable(3, [1]) + x
+         Variable(6, [2])
+
+         add another variable - Y
+         >> x = Variable(3, [1, 0])
+         >> Variable(3, [0, 1]) + x
+         Variable(6, [1, 1])
         """
         return self.__add__(other)
 
     def __mul__(self, other):
-        """Summary
+        """Dunder method for multiplying another variable or scalar/vector
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to multiply on self.var.
         
-        Parameters
-        ----------
-        other : int/float, Variable
-            Description
-        
-        Returns
-        -------
-        var: Variable
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable with `other` multiplied.
+            
+         EXAMPLES
+         =========
+         multiplies scalar
+         >> x = Variable(3, [1])
+         >> x * 3
+         Variable(9, [3])
 
-        Examples
-        -------
-        multiplies scalar
-        >> x = Variable(3, [1])
-        >> x * 3
-        Variable(18, 1)
+         multiplies another variable - X
+         >> x = Variable(3, [1])
+         >> x * Variable(3, [1])
+         Variable(9, [6])
 
-        multiplies another variable - X
-        >> x = Variable(3, [1])
-        >> x + Variable(3, [1])
-        Variable(6, [2])
-
-        multiplies another variable - Y
-        >> x = Variable(3, [1, 0])
-        >> x * Variable(3, [0, 1])
-        Variable(9, [3, 3])
+         multiplies another variable - Y
+         >> x = Variable(3, [1, 0])
+         >> x * Variable(3, [0, 1])
+         Variable(9, [3, 3])
 
         """
         try:
@@ -117,97 +143,123 @@ class Variable:
             return Variable(self.var * other, self.der * other)
 
     def __rmul__(self, other):
-        """Summary
+        """Dunder method for multiplying another variable or scalar/vector from left
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to multiply on self.var.
         
-        Parameters
-        ----------
-        other : TYPE
-            Description
-        
-        Returns
-        -------
-        TYPE
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable with `other` multiplied.
+            
+         EXAMPLES
+         =========
+         multiplies scalar
+         >> x = Variable(3, [1])
+         >> 3 * x
+         Variable(9, [3])
+
+         multiplies another variable - X
+         >> x = Variable(3, [1])
+         >> Variable(3, [1]) * x
+         Variable(9, [6])
+
+         multiplies another variable - Y
+         >> x = Variable(3, [1, 0])
+         >> Variable(3, [0, 1]) * x
+         Variable(9, [3, 3])
+
         """
         return self.__mul__(other)
 
     def __sub__(self, other):
-        """Summary
+        """Dunder method for subtracting another variable or scalar/vector
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to subtract from self.var.
         
-        Parameters
-        ----------
-        other : int/float, Variable
-            Description
-        
-        Returns
-        -------
-        var: Variable
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable that self.var subtracts `other`.
+            
+         EXAMPLES
+         =========
+         subtracts scalar
+         >> x = Variable(3, [1])
+         >> x - 3
+         Variable(0, [1])
+ 
+         multiplies another variable - X
+         >> x = Variable(3, [1])
+         >> x - Variable(3, [1])
+         Variable(0, [0])
 
-        Examples
-        -------
-        multiplies scalar
-        >> x = Variable(3, [1])
-        >> x * 3
-        Variable(18, 1)
-
-        multiplies another variable - X
-        >> x = Variable(3, [1])
-        >> x - Variable(3, [1])
-        Variable(0, [0])
-
-        multiplies another variable - Y
-        >> x = Variable(4, [1, 0])
-        >> x * Variable(3, [0, 1])
-        Variable(1, [1, -1])
+         multiplies another variable - Y
+         >> x = Variable(4, [1, 0])
+         >> x - Variable(3, [0, 1])
+         Variable(1, [1, -1])
         """
         return self.__add__(-other)
 
     def __rsub__(self, other):
-        """Summary
+        """Dunder method for subtracted by another variable or scalar/vector 
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to subtract on self.var.
         
-        Parameters
-        ----------
-        other : TYPE
-            Description
-        
-        Returns
-        -------
-        TYPE
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable that `other` subtracts self.var.
+            
+         EXAMPLES
+         =========
+         subtracted by scalar
+         >> x = Variable(3, [1])
+         >> 3 - x
+         Variable(0, [-1])
+ 
+         subtracted by another variable - X
+         >> x = Variable(3, [1])
+         >> Variable(3, [1]) - x
+         Variable(0, [0])
+
+         subtracted by another variable - Y
+         >> x = Variable(3, [1, 0])
+         >> Variable(4, [0, 1]) - x
+         Variable(1, [-1, 1])
         """
-        return self.__sub__(other)
+        return (-self).__add__(other)
 
     def __truediv__(self, other):
-        """Summary
+        """Dunder method for dividing another variable or scalar/vector
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to divide self.var.
         
-        Parameters
-        ----------
-        other : int/float, Variable
-            Description
-        
-        Returns
-        -------
-        var: Variable
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable that self.var divides `other`.
+            
+         EXAMPLES
+         =========
+         divides scalar
+         >> x = Variable(3, [1])
+         >> x / 3
+         Variable(1, 1)
 
-        Examples
-        -------
-        divides scalar
-        >> x = Variable(3, [1])
-        >> x / 3
-        Variable(1, 1)
+         divides another variable - X
+         >> x = Variable(3, [1])
+         >> x / Variable(4, [1])
+         Variable(3/4, [1/16])
 
-        divides another variable - X
-        >> x = Variable(3, [1])
-        >> x / Variable(4, [1])
-        Variable(3/4, [1/16])
-
-        multiplies another variable - Y
-        >> x = Variable(3, [1, 0])
-        >> x / Variable(4, [0, 1])
-        Variable(3/4, [1/4, -3/16])
-
+         divides another variable - Y
+         >> x = Variable(3, [1, 0])
+         >> x / Variable(4, [0, 1])
+         Variable(3/4, [1/4, -3/16])
         """
         try:
             return Variable(self.var / other.var, (self.der * other.var - self.var * other.der)/(other.var**2))
@@ -215,108 +267,227 @@ class Variable:
             return Variable(self.var / other, self.der / other)
 
     def __rtruediv__(self, other):
-        """Summary
+       """Dunder method for being divided by another variable or scalar/vector
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to be divided by self.var.
         
-        Parameters
-        ----------
-        other : TYPE
-            Description
-        
-        Returns
-        -------
-        TYPE
-            Description
+         RETURNS
+         ========
+         var: Variable, a new variable 'other' divides self.var.
+            
+         EXAMPLES
+         =========
+         divided by scalar
+         >> x = Variable(3, [1])
+         >> 2 / x
+         Variable(2/3, [-2/9])
+
+         divided by another variable - X
+         >> x = Variable(4, [1])
+         >> Variable(3, [1]) / x
+         Variable(3/4, [1/16])
+
+         divided by another variable - Y
+         >> x = Variable(4, [0, 1])
+         >> Variable(3, [1, 0]) / x
+         Variable(3/4, [1/4, -3/16])
         """
-        return self.__truediv__(other)
+        try:
+            return Variable(other.var / self.var, (other.der * self.var - other.var * self.der)/(self.var**2))
+        except AttributeError:
+            return Variable(other / self.var, other * (-self.var**(-2)) * self.der)
 
     def __neg__(self):
-        """Summary
-
-        Examples
-        -------
-        >> x = Variable(3, [1])
-        >> -x
-        Variable(-3, [-1])
+        """Dunder method for taking the negative
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+        
+         RETURNS
+         ========
+         var: Variable, a new variable in negation
+            
+         EXAMPLES
+         =========
+         >> x = Variable(3, [1])
+         >> -x
+         Variable(-3, [-1])
         """
         return Variable(-self.var, -self.der)
 
     def __eq__(self, other):
-        """Summary
+        """Dunder method for checking equality
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to be checked if it is equal
         
-        Parameters
-        ----------
-        other : TYPE
-            Description
-        
-        Returns
-        -------
-        TYPE
-            Description
-        
-        Examples
-        -------
-        >> Variable(3, [1]) == 3
-        False
+         RETURNS
+         ========
+         out: bool, True/False, Equal/Not Equal.
+            
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) == 3
+         False
 
-        >> X = Variable(3, 1)
-        >> Y = Variable(3, [1])
-        >> X == Y
-        True
+         >> X = Variable(3, 1)
+         >> Y = Variable(3, [1])
+         >> X == Y
+         True
         """
         try:
-            return (self.var == other.var) and np.array_equal(self.der, other.der)
+            out = (self.var == other.var) and np.array_equal(self.der, other.der)
         except AttributeError:
             # a scalar is not equal to a variable
-            return False
-
+            out = False
+        return out
 
     def __ne__(self, other):
-        """Summary
+        """Dunder method for checking inequality
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to be checked if it is not equal
         
-        Parameters
-        ----------
-        other : TYPE
-            Description
-        
-        Returns
-        -------
-        TYPE
-            Description
-        
-        Examples
-        -------
-        >> X = Variable(3, 1)
-        >> Y = Variable(3, [1])
-        >> X != Y
-        False
+         RETURNS
+         ========
+         out: bool, True/False, Not Equal/ Equal.
+            
+         EXAMPLES
+         =========
+         >> 3 != Variable(3, [1])
+         True
+
+         >> X = Variable(3, 1)
+         >> Y = Variable(3, [1])
+         >> Y != X
+         False
         """
         return not self.__eq__(other)
 
     def __lt__(self, other):
+        """Dunder method for less than
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+        
+         RETURNS
+         ========
+         out: bool, True/False, less than/ not less than.
+            
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) < 3
+         False
+
+         >> X = Variable(3, 1)
+         >> Y = Variable(4, [1])
+         >> X < Y
+         True
+        """
         try:
             return self.var < other.var
         except AttributeError:
             return self.var < other
 
     def __le__(self, other):
+        """Dunder method for less than or equal to
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+        
+         RETURNS
+         ========
+         out: bool, True/False, less than or equal to/ not less than or equal to.
+            
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) <= 3
+         True
+
+         >> X = Variable(3, 1)
+         >> Y = Variable(4, [1])
+         >> X <= Y
+         True
+        """
         try:
             return self.var <= other.var
         except AttributeError:
             return self.var <= other
 
     def __gt__(self, other):
+        """Dunder method for greater than
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+        
+         RETURNS
+         ========
+         out: bool, True/False, greater than/ not greater than.
+            
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) > 3
+         False
+
+         >> X = Variable(3, 1)
+         >> Y = Variable(4, [1])
+         >> X > Y
+         False
+        """
         try:
             return self.var > other.var
         except AttributeError:
             return self.var > other
 
     def __ge__(self, other):
+        """Dunder method for greater than or equal to
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+        
+         RETURNS
+         ========
+         out: bool, True/False, greater than or equal to/ not greater than or equal to.
+            
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) >= 3
+         True
+
+         >> X = Variable(3, 1)
+         >> Y = Variable(4, [1])
+         >> X >= Y
+         False
+        """
         try:
             return self.var >= other.var
         except AttributeError:
             return self.var >= other
 
     def __abs__(self):
+         """Dunder method for absolute value
+         INPUTS
+         =======
+         self: Variable object
+
+         RETURNS
+         ========
+         out: bool, True/False, greater than or equal to/ not greater than or equal to.
+            
+         EXAMPLES
+         =========
+         >> abs(ariable(-3, [-1]))
+         Variable(3, [1])
+        """
         var = abs(self.var)
         der = np.abs(self.der)
         return Variable(var, der) 
