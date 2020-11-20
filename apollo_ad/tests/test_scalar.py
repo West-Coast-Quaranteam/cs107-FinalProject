@@ -5,6 +5,11 @@ from ..apollo_ad import *
 
 class TestScalar:
 
+    def test_initializer(self):
+        with pytest.raises(TypeError):
+            x = Variable("hello")
+
+
     def test_add_radd(self):
         x = Variable(3, [1])
         y = x + 3
