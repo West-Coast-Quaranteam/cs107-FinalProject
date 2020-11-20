@@ -38,7 +38,10 @@ class Variable:
          Variable(3, [1, 0])
 
          """
-        self.var = var
+        if isinstance(var, (int, float)):
+            self.var = var
+        else:
+            raise TypeError('You did not enter a valid integer or float.')
         if isinstance(seed, (int, float)):
             seed = np.array([seed])
         elif isinstance(seed, list):
@@ -59,18 +62,18 @@ class Variable:
          EXAMPLES
          =========
          add scalar
-         >> x = Variable(3, [1])
-         >> x + 3
+         >>> x = Variable(3, [1])
+         >>> x + 3
          Variable(6, [1])
 
          add another variable - X
-         >> x = Variable(3, [1])
-         >> x + Variable(3, [1])
+         >>> x = Variable(3, [1])
+         >>> x + Variable(3, [1])
          Variable(6, [2])
 
          add another variable - Y
-         >> x = Variable(3, [1, 0])
-         >> x + Variable(3, [0, 1])
+         >>> x = Variable(3, [1, 0])
+         >>> x + Variable(3, [0, 1])
          Variable(6, [1, 1])
         """
         try:
@@ -92,18 +95,18 @@ class Variable:
          EXAMPLES
          =========
          add scalar
-         >> x = Variable(3, [1])
-         >> 3 + x
+         >>> x = Variable(3, [1])
+         >>> 3 + x
          Variable(6, 1)
 
          add another variable - X
-         >> x = Variable(3, [1])
-         >> Variable(3, [1]) + x
+         >>> x = Variable(3, [1])
+         >>> Variable(3, [1]) + x
          Variable(6, [2])
 
          add another variable - Y
-         >> x = Variable(3, [1, 0])
-         >> Variable(3, [0, 1]) + x
+         >>> x = Variable(3, [1, 0])
+         >>> Variable(3, [0, 1]) + x
          Variable(6, [1, 1])
         """
         return self.__add__(other)
@@ -122,13 +125,13 @@ class Variable:
          EXAMPLES
          =========
          multiplies scalar
-         >> x = Variable(3, [1])
-         >> x * 3
+         >>> x = Variable(3, [1])
+         >>> x * 3
          Variable(9, [3])
 
          multiplies another variable - X
-         >> x = Variable(3, [1])
-         >> x * Variable(3, [1])
+         >>> x = Variable(3, [1])
+         >>> x * Variable(3, [1])
          Variable(9, [6])
 
          multiplies another variable - Y
@@ -156,18 +159,18 @@ class Variable:
          EXAMPLES
          =========
          multiplies scalar
-         >> x = Variable(3, [1])
-         >> 3 * x
+         >>> x = Variable(3, [1])
+         >>> 3 * x
          Variable(9, [3])
 
          multiplies another variable - X
-         >> x = Variable(3, [1])
-         >> Variable(3, [1]) * x
+         >>> x = Variable(3, [1])
+         >>> Variable(3, [1]) * x
          Variable(9, [6])
 
          multiplies another variable - Y
-         >> x = Variable(3, [1, 0])
-         >> Variable(3, [0, 1]) * x
+         >>> x = Variable(3, [1, 0])
+         >>> Variable(3, [0, 1]) * x
          Variable(9, [3, 3])
 
         """
@@ -187,18 +190,18 @@ class Variable:
          EXAMPLES
          =========
          subtracts scalar
-         >> x = Variable(3, [1])
-         >> x - 3
+         >>> x = Variable(3, [1])
+         >>> x - 3
          Variable(0, [1])
  
          multiplies another variable - X
-         >> x = Variable(3, [1])
-         >> x - Variable(3, [1])
+         >>> x = Variable(3, [1])
+         >>> x - Variable(3, [1])
          Variable(0, [0])
 
          multiplies another variable - Y
-         >> x = Variable(4, [1, 0])
-         >> x - Variable(3, [0, 1])
+         >>> x = Variable(4, [1, 0])
+         >>> x - Variable(3, [0, 1])
          Variable(1, [1, -1])
         """
         return self.__add__(-other)
@@ -217,18 +220,18 @@ class Variable:
          EXAMPLES
          =========
          subtracted by scalar
-         >> x = Variable(3, [1])
-         >> 3 - x
+         >>> x = Variable(3, [1])
+         >>> 3 - x
          Variable(0, [-1])
  
          subtracted by another variable - X
-         >> x = Variable(3, [1])
-         >> Variable(3, [1]) - x
+         >>> x = Variable(3, [1])
+         >>> Variable(3, [1]) - x
          Variable(0, [0])
 
          subtracted by another variable - Y
-         >> x = Variable(3, [1, 0])
-         >> Variable(4, [0, 1]) - x
+         >>> x = Variable(3, [1, 0])
+         >>> Variable(4, [0, 1]) - x
          Variable(1, [-1, 1])
         """
         return (-self).__add__(other)
@@ -247,18 +250,18 @@ class Variable:
          EXAMPLES
          =========
          divides scalar
-         >> x = Variable(3, [1])
-         >> x / 3
+         >>> x = Variable(3, [1])
+         >>> x / 3
          Variable(1, 1/3)
 
          divides another variable - X
-         >> x = Variable(3, [1])
-         >> x / Variable(4, [1])
+         >>> x = Variable(3, [1])
+         >>> x / Variable(4, [1])
          Variable(3/4, [1/16])
 
          divides another variable - Y
-         >> x = Variable(3, [1, 0])
-         >> x / Variable(4, [0, 1])
+         >>> x = Variable(3, [1, 0])
+         >>> x / Variable(4, [0, 1])
          Variable(3/4, [1/4, -3/16])
         """
         try:
@@ -280,18 +283,18 @@ class Variable:
          EXAMPLES
          =========
          divided by scalar
-         >> x = Variable(3, [1])
-         >> 2 / x
+         >>> x = Variable(3, [1])
+         >>> 2 / x
          Variable(2/3, [-2/9])
 
          divided by another variable - X
-         >> x = Variable(4, [1])
-         >> Variable(3, [1]) / x
+         >>> x = Variable(4, [1])
+         >>> Variable(3, [1]) / x
          Variable(3/4, [1/16])
 
          divided by another variable - Y
-         >> x = Variable(4, [0, 1])
-         >> Variable(3, [1, 0]) / x
+         >>> x = Variable(4, [0, 1])
+         >>> Variable(3, [1, 0]) / x
          Variable(3/4, [1/4, -3/16])
         """
         try:
@@ -312,8 +315,8 @@ class Variable:
             
          EXAMPLES
          =========
-         >> x = Variable(3, [1])
-         >> -x
+         >>> x = Variable(3, [1])
+         >>> -x
          Variable(-3, [-1])
         """
         return Variable(-self.var, -self.der)
@@ -334,9 +337,9 @@ class Variable:
          >> Variable(3, [1]) == 3
          False
 
-         >> X = Variable(3, 1)
-         >> Y = Variable(3, [1])
-         >> X == Y
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(3, [1])
+         >>> X == Y
          True
         """
         try:
@@ -362,9 +365,9 @@ class Variable:
          >> 3 != Variable(3, [1])
          True
 
-         >> X = Variable(3, 1)
-         >> Y = Variable(3, [1])
-         >> Y != X
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(3, [1])
+         >>> Y != X
          False
         """
         return not self.__eq__(other)
@@ -385,9 +388,9 @@ class Variable:
          >> Variable(3, [1]) < 3
          False
 
-         >> X = Variable(3, 1)
-         >> Y = Variable(4, [1])
-         >> X < Y
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X < Y
          True
         """
         try:
@@ -411,9 +414,9 @@ class Variable:
          >> Variable(3, [1]) <= 3
          True
 
-         >> X = Variable(3, 1)
-         >> Y = Variable(4, [1])
-         >> X <= Y
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X <= Y
          True
         """
         try:
@@ -437,9 +440,9 @@ class Variable:
          >> Variable(3, [1]) > 3
          False
 
-         >> X = Variable(3, 1)
-         >> Y = Variable(4, [1])
-         >> X > Y
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X > Y
          False
         """
         try:
@@ -460,12 +463,12 @@ class Variable:
             
          EXAMPLES
          =========
-         >> Variable(3, [1]) >= 3
+         >>> Variable(3, [1]) >= 3
          True
 
-         >> X = Variable(3, 1)
-         >> Y = Variable(4, [1])
-         >> X >= Y
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X >= Y
          False
         """
         try:
@@ -485,7 +488,7 @@ class Variable:
             
          EXAMPLES
          =========
-         >> abs(ariable(-3, [-1]))
+         >>> abs(ariable(-3, [-1]))
          Variable(3, [1])
         """
         var = abs(self.var)
