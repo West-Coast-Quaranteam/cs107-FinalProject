@@ -11,7 +11,7 @@
 | Chen Lucy Zhang | chz522@g.harvard.edu         | 
 
 
-## Installation
+## Installation (we assume you are familiar with virtual environments and Git)
 
 ```bash
 # install virtualenv
@@ -33,7 +33,7 @@ cd cs107-FinalProject
 pip install -r requirements.txt
 
 # Test the package
-Run module test in apollo_ad/tests/
+# Run module test.py in apollo_ad/tests/ directory
 pytest test.py
 ```
 
@@ -47,7 +47,9 @@ First, to calculate the derivative of y = cos(x) + x^2 at x = 2:
 from apollo_ad.apollo_ad import *
 x = Variable(2)
 y = Variable.cos(x) + x ** 2
-
+print(y)
+print(y.var)
+print(y.der)
 # y.var: 3.583853163452857 y.der: [3.09070257]
 assert y.var == np.cos(2) + 4
 assert y.der == -np.sin(2) + 2 * 2
@@ -59,6 +61,10 @@ Second, to calculate the derivative of y = 2 * log(x) - sqrt(x) / 3 at x = 2:
 from apollo_ad.apollo_ad import *
 x = Variable(2) 
 y = 2 * Variable.log(x) - Variable.sqrt(x)/3
+
+print(y)
+print(y.var)
+print(y.der)
 
 # Value: 0.9148898403288588 , Der: [0.88214887]
 assert np.around(y.var, 4) == np.around(2 * np.log(2) - np.sqrt(2)/3, 4)
