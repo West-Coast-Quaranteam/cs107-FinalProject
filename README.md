@@ -33,7 +33,7 @@ cd cs107-FinalProject
 pip install -r requirements.txt
 
 # Test the package
-# Run module test.py in apollo_ad/tests/ directory
+# From directory apollo_ad/tests/ run the module test.py
 pytest test.py
 ```
 
