@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 # Test the package
 # From directory apollo_ad/tests/ run the module test.py
-pytest test.py
+pytest test_scalar.py
 ```
 
 ## Examples
