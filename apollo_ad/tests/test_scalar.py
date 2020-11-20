@@ -381,6 +381,8 @@ class TestScalar:
             x = Variable(-2)
             f=Variable.arcsin(x)
 
+        assert Variable.arcsin(0.5) == np.arcsin(0.5)
+
 
     def test_arccos(self):
         x = Variable(0)
@@ -391,3 +393,5 @@ class TestScalar:
         with pytest.raises(ValueError):
             x = Variable(2)
             f=Variable.arccos(x)
+
+        assert Variable.arccos(0.5) == np.arccos(0.5)

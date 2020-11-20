@@ -640,9 +640,12 @@ class Variable:
         output: sine of self
         
         Examples
+        >>> x = Variable(0)
+        >>> Variable.sin(x)
+        Variable(0.0, [1.])     
         ========= 
-
         """
+
         try:
             var = np.sin(variable.var)
             b = np.cos(variable.var)
@@ -667,6 +670,9 @@ class Variable:
         output: cosine of self
         
         Examples
+        >>> x = Variable(0)
+        >>> Variable.cos(x)
+        Variable(1.0, [0.])     
         ========= 
 
         """
@@ -716,7 +722,8 @@ class Variable:
         except AttributeError:
             return np.tan(variable)
 
-    def arcsin(self):
+    @staticmethod
+    def arcsin(variable):
         """ 
         Returns the arcsine of Var object.
         
@@ -730,20 +737,25 @@ class Variable:
         
         Examples
         ========= 
-
+        >>> x = Variable(0)
+        >>> Variable.arcsin(x)
+        Variable(0.0, [1.])        
         """
-        if self.var>1 or self.var <-1:
-            raise ValueError('Please input -1 <= x <=1')
+        try:
+            if variable.var>1 or variable.var <-1:
+                raise ValueError('Please input -1 <= x <=1')
 
-        else:
-            var = np.arcsin(self.var)
-            der = 1 / np.sqrt(1 - (self.var ** 2))
-
-
-        return Variable(var, der) 
+            else:
+                var = np.arcsin(variable.var)
+                der = 1 / np.sqrt(1 - (variable.var ** 2))
 
 
-    def arccos(self):
+            return Variable(var, der) 
+        except AttributeError:
+            return np.arcsin(variable)
+
+    @staticmethod
+    def arccos(variable):
         """ 
         Returns the arccosine of Var object.
         
@@ -757,16 +769,20 @@ class Variable:
         
         Examples
         ========= 
-
+        >>> x = Variable(0)
+        >>> Variable.arccos(x)
+        Variable(0.0, [-1.])
         """
+        try:
+            if variable.var>1 or variable.var <-1:
+                raise ValueError('Please input -1 <= x <=1')
 
-        if self.var>1 or self.var <-1:
-            raise ValueError('Please input -1 <= x <=1')
-
-        else:
-            var = np.arcsin(self.var)
-            der = -1 / np.sqrt(1 - (self.var ** 2))
-        return Variable(var, der)
+            else:
+                var = np.arcsin(variable.var)
+                der = -1 / np.sqrt(1 - (variable.var ** 2))
+            return Variable(var, der)
+        except AttributeError:
+            return np.arccos(variable)
 
     @staticmethod
     def arctan(variable):
@@ -904,8 +920,3 @@ class Variable:
 
     def __str__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
-
-if __name__=='__main__':
-    x = Variable(4)
-    print(Variable.sqrt(x))
-    print(np.sqrt(4))
