@@ -2,7 +2,6 @@ import numpy as np
 
 
 class Variable:
-
     """Summary
     
     Attributes
@@ -12,6 +11,7 @@ class Variable:
     var : TYPE
         Description
     """
+
     def __init__(self, var, seed = np.array([1])):
         """Initiate a auto diff variable.
          INPUTS
@@ -54,7 +54,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable with `other` added.
+         output: Variable, a new variable with `other` added.
             
          EXAMPLES
          =========
@@ -87,7 +87,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable with `other` added.
+         output: Variable, a new variable with `other` added.
             
          EXAMPLES
          =========
@@ -117,7 +117,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable with `other` multiplied.
+         output: Variable, a new variable with `other` multiplied.
             
          EXAMPLES
          =========
@@ -151,7 +151,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable with `other` multiplied.
+         output: Variable, a new variable with `other` multiplied.
             
          EXAMPLES
          =========
@@ -182,7 +182,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable that self.var subtracts `other`.
+         output: Variable, a new variable that self.var subtracts `other`.
             
          EXAMPLES
          =========
@@ -242,7 +242,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable that self.var divides `other`.
+         output: Variable, a new variable that self.var divides `other`.
             
          EXAMPLES
          =========
@@ -275,7 +275,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable 'other' divides self.var.
+         output: Variable, a new variable 'other' divides self.var.
             
          EXAMPLES
          =========
@@ -308,7 +308,7 @@ class Variable:
         
          RETURNS
          ========
-         var: Variable, a new variable in negation
+         output: Variable, a new variable in negation
             
          EXAMPLES
          =========
@@ -327,7 +327,7 @@ class Variable:
         
          RETURNS
          ========
-         out: bool, True/False, Equal/Not Equal.
+         output: bool, True/False, Equal/Not Equal.
             
          EXAMPLES
          =========
@@ -355,7 +355,7 @@ class Variable:
         
          RETURNS
          ========
-         out: bool, True/False, Not Equal/ Equal.
+         output: bool, True/False, Not Equal/ Equal.
             
          EXAMPLES
          =========
@@ -404,7 +404,7 @@ class Variable:
         
          RETURNS
          ========
-         out: bool, True/False, less than or equal to/ not less than or equal to.
+         output (bool): True/False, less than or equal to/ not less than or equal to.
             
          EXAMPLES
          =========
@@ -430,7 +430,7 @@ class Variable:
         
          RETURNS
          ========
-         out: bool, True/False, greater than/ not greater than.
+         output (bool): True/False, greater than/ not greater than.
             
          EXAMPLES
          =========
@@ -456,7 +456,7 @@ class Variable:
         
          RETURNS
          ========
-         out: bool, True/False, greater than or equal to/ not greater than or equal to.
+         output (bool): True/False, greater than or equal to/ not greater than or equal to.
             
          EXAMPLES
          =========
@@ -481,7 +481,7 @@ class Variable:
 
          RETURNS
          ========
-         out: bool, True/False, greater than or equal to/ not greater than or equal to.
+         output: Variable object after taking the absolute value
             
          EXAMPLES
          =========
@@ -626,66 +626,75 @@ class Variable:
         except AttributeError:
             return np.log(variable)
 
-    def sin(self):
+    @staticmethod
+    def sin(variable):
 
         """Returns the sine of Var object.
         
         INPUTS
         ==========
-        self: Var object
+        variable: Variable object/int/float
         
         Returns
         ========= 
-        output: sine of self
+        output: a new Variable object after taking the sine
         
         Examples
+        >>> x = Variable(0)
+        >>> Variable.sin(x)
+        Variable(0.0, [1.])     
         ========= 
-
         """
-        var = np.sin(self.var)
-        if len(self.der.shape):
-            b = np.cos(self.var)
-            der = self.der * b
-        else:
-            der = None
 
-        return Variable(var, der)
+        try:
+            var = np.sin(variable.var)
+            b = np.cos(variable.var)
+            der = variable.der * b
+            return Variable(var, der)
+        except AttributeError:
+            return np.sin(variable)
 
+        
 
-    def cos(self):
+    @staticmethod
+    def cos(variable):
         """ 
         Returns the cosine of Var object.
         
         INPUTS
         ==========
-        self: Var object
+        variable: Variable object/int/float
         
         Returns
         ========= 
-        output: cosine of self
+        output: a new Variable object after taking the cosine
         
         Examples
+        >>> x = Variable(0)
+        >>> Variable.cos(x)
+        Variable(1.0, [0.])     
         ========= 
 
         """
-        var = np.cos(self.var)
-        if len(self.der.shape):
-            b = -np.sin(self.var)
-            der = self.der * b
-        else:
-            der = None
+        try:
+            var = np.cos(variable.var)
+            b = -np.sin(variable.var)
+            der = variable.der * b
 
-        return Variable(var, der)
+            return Variable(var, der)
+        except AttributeError:
+            return np.cos(variable)
 
     @staticmethod
     def tan(variable):
         """Returns the tangent of the Variable object.
         INPUTS
         =======
-        self: Variable object
-        RETURNS
-        ========
-        tan: a new Variable object
+        variable: Variable object/int/float
+        
+        Returns
+        ========= 
+        output: a new Variable object after taking the tangent
 
         EXAMPLES
         =========
@@ -714,67 +723,78 @@ class Variable:
         except AttributeError:
             return np.tan(variable)
 
-    def arcsin(self):
+    @staticmethod
+    def arcsin(variable):
         """ 
         Returns the arcsine of Var object.
         
         INPUTS
         ==========
-        self: Var object
+        variable: Variable object/int/float
         
         Returns
         ========= 
-        output:  arcsine of self
+        output: a new Variable object after taking the arcsine
         
         Examples
         ========= 
-
+        >>> x = Variable(0)
+        >>> Variable.arcsin(x)
+        Variable(0.0, [1.])        
         """
-        if self.var>1 or self.var <-1:
-            raise ValueError('Please input -1 <= x <=1')
+        try:
+            if variable.var>1 or variable.var <-1:
+                raise ValueError('Please input -1 <= x <=1')
 
-        else:
-            var = np.arcsin(self.var)
-            der = 1 / np.sqrt(1 - (self.var ** 2))
-
-
-        return Variable(var, der) 
+            else:
+                var = np.arcsin(variable.var)
+                der = 1 / np.sqrt(1 - (variable.var ** 2))
 
 
-    def arccos(self):
+            return Variable(var, der) 
+        except AttributeError:
+            return np.arcsin(variable)
+
+    @staticmethod
+    def arccos(variable):
         """ 
         Returns the arccosine of Var object.
         
         INPUTS
         ==========
-        self: Var object
+        variable: Variable object/int/float
         
         Returns
         ========= 
-        output: arccosine of self
+        output: a new Variable object after taking the arccosine
         
         Examples
         ========= 
-
+        >>> x = Variable(0)
+        >>> Variable.arccos(x)
+        Variable(0.0, [-1.])
         """
+        try:
+            if variable.var>1 or variable.var <-1:
+                raise ValueError('Please input -1 <= x <=1')
 
-        if self.var>1 or self.var <-1:
-            raise ValueError('Please input -1 <= x <=1')
-
-        else:
-            var = np.arcsin(self.var)
-            der = -1 / np.sqrt(1 - (self.var ** 2))
-        return Variable(var, der)
+            else:
+                var = np.arcsin(variable.var)
+                der = -1 / np.sqrt(1 - (variable.var ** 2))
+            return Variable(var, der)
+        except AttributeError:
+            return np.arccos(variable)
 
     @staticmethod
     def arctan(variable):
         """Returns the arctangent of the Variable object.
         INPUTS
         =======
-        self: Variable object
-        RETURNS
-        ========
-        arctan: a new Variable object
+        variable: Variable object/int/float
+        
+        Returns
+        ========= 
+        output: a new Variable object after taking the arctangent
         
         EXAMPLES
         =========
@@ -803,11 +823,11 @@ class Variable:
 
         INPUTS
         =======
-        self: Variable object
-
-        RETURNS
-        ========
-        sinh: a new Variable object
+        variable: Variable object/int/float
+        
+        Returns
+        ========= 
+        output: a new Variable object after taking the hyperbolic sine
 
 
         EXAMPLES
@@ -837,11 +857,11 @@ class Variable:
 
         INPUTS
         =======
-        self: Variable object
-
-        RETURNS
-        ========
-        cosh: a new Variable object
+        variable: Variable object/int/float
+        
+        Returns
+        ========= 
+        output: a new Variable object after taking the hyperbolic cosine
 
         EXAMPLES
         =========
@@ -871,10 +891,11 @@ class Variable:
 
         INPUTS
         =======
-        self: Variable object
-        RETURNS
-        ========
-        tanh: a new Variable object
+        variable: Variable object/int/float
+        
+        Returns
+        ========= 
+        output: a new Variable object after taking the hyperbolic tangent
 
         EXAMPLES
         =========
@@ -902,8 +923,3 @@ class Variable:
 
     def __str__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
-
-if __name__=='__main__':
-    x = Variable(4)
-    print(Variable.sqrt(x))
-    print(np.sqrt(4))

@@ -357,12 +357,18 @@ class TestScalar:
         assert f.var == 0.0
         assert f.der == [1.]
 
+        # check constant
+        assert Variable.sin(2) == np.sin(2)
+
 
     def test_cos(self):
         x = Variable(0)
         f = Variable.cos(x)
         assert f.var == 1.0
-        assert f.der == [-0.]
+        assert f.der == [0.]
+
+        # check constant
+        assert Variable.cos(2) == np.cos(2)
 
     def test_arcsin(self):
         x = Variable(0)
@@ -375,6 +381,9 @@ class TestScalar:
             x = Variable(-2)
             f=Variable.arcsin(x)
 
+        assert Variable.arcsin(0.5) == np.arcsin(0.5)
+
+
     def test_arccos(self):
         x = Variable(0)
         f = Variable.arccos(x)
@@ -384,3 +393,5 @@ class TestScalar:
         with pytest.raises(ValueError):
             x = Variable(2)
             f=Variable.arccos(x)
+
+        assert Variable.arccos(0.5) == np.arccos(0.5)
