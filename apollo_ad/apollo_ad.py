@@ -1,5 +1,48 @@
 import numpy as np
 
+class Functions:
+    def __init__(self, var):
+        """Initiate a function variable.
+         INPUTS
+         =======
+         self: Variable object
+         var: float/int, the value of this variable
+         seed: int/list/array, the seed vector (derivative from the parents)
+
+         RETURNS
+         ========
+
+         EXAMPLES
+         =========
+
+         # multiple functions
+         >> x = Variable(3, [1, 0])
+         >> y = Variable(4, [0, 1])
+         >> f1 =  Variable.cos(x) + y ** 2
+         >> f2 = 2 * Variable.log(y) - Variable.sqrt(x)/3 
+         >> z = Functions([f1, f2])
+         Values: [XXX, XXX]
+         Derivative: 
+         [ [ xxx, xxx],
+           [ xxx, xxx] ]
+        
+         """
+        if isinstance(var, list):
+            check = [1 if isinstance(i, Variable) else 0 for i in var]
+            if len(check) != sum(check):
+                raise TypeError('Each function should be a variable class')
+        else:
+            raise TypeError('The input should be a list of variables standing for functions')
+
+        self.var = np.array([i.var for i in var])
+        self.der = np.array([i.der for i in var])
+    
+    def __repr__(self):
+        return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
+
+    def __str__(self):
+        return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der) 
+
 
 class Variable:
     """Summary
@@ -37,6 +80,17 @@ class Variable:
          >>> x = Variable(3, [1, 0])
          Variable(3, [1, 0])
 
+         # multiple functions
+         >> x = Variable(3, [1, 0])
+         >> y = Variable(4, [0, 1])
+         >> f1 =  Variable.cos(x) + y ** 2
+         >> f2 = 2 * Variable.log(y) - Variable.sqrt(x)/3 
+         >> z = Functions([f1, f2])
+         Values: [XXX, XXX]
+         Derivative: 
+         [ [ xxx, xxx],
+           [ xxx, xxx] ]
+        
          """
         if isinstance(var, (int, float)):
             self.var = var
