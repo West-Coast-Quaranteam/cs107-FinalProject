@@ -400,3 +400,14 @@ class TestScalar:
             f=Variable.arccos(x)
 
         assert Variable.arccos(0.5) == np.arccos(0.5)
+
+    def test_functions(self):
+        x = Variable(3, [1, 0, 0])
+        y = Variable(4, [0, 1, 0])
+        z = Variable(5, [0, 0, 1])
+        f1 =  Variable.cos(x) + y ** 2 + Variable.sin(z)
+        f2 = 2 * Variable.log(y) - Variable.sqrt(x)/3 
+        z = Functions([f1, f2])
+
+        assert np.array_equal(np.around(z.var, 4), np.array([14.0511, 2.1952]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.1411, 8.0000, 0.2837], [-0.0962, 0.5000, 0.0000]]))
