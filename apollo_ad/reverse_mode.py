@@ -27,7 +27,6 @@ class Reverse_Mode:
         derivatives = np.array([i.gradient() for i in inputs])
         return value, derivatives
 
-
     def __add__(self, other):
         try:
             f = Reverse_Mode(self.var + other.var)
@@ -35,10 +34,32 @@ class Reverse_Mode:
             self.child.append((1.0, f))
         except AttributeError:
             f = Reverse_Mode(self.var + other)
+            self.child.append((1.0, f))
         return f
 
     def __radd__(self, other):
         return self.__add__(other)
+
+    def __neg__(self):
+        """Dunder method for taking the negative
+         INPUTS
+         =======
+         self: Reverse_Mode object
+
+         RETURNS
+         ========
+         output: Reverse_Mode, a new Reverse_Mode in negation
+
+         EXAMPLES
+         =========
+         >>>
+         >>>
+
+        """
+
+        f = Reverse_Mode(-self.var)
+        self.child.append((-1, f))
+        return f
 
     def __mul__(self, other):
         try:
@@ -54,19 +75,46 @@ class Reverse_Mode:
         return self.__mul__(other)
 
 # HAVING ISSUES WITH NEGATION/SUBTRACTION
-    # def __sub__(self, other):
-    #     return self.__add__(-other)
+# UPDATE: ISSUES FIXED. BY HAOXIN
 
-    # def __rsub__(self, other):
-    #     return (-self).__add__(other)
+    def __sub__(self, other):
+        return self.__add__(-other)
 
-    # def __neg__(self):
-    #     # children = self.child
-    #     # f = Reverse_Mode(-self.var, -self.der)
-    #     # f.child = children
-    #     self.der = -self.der
-    #     self.var = -self.var
-    #     return self
+    def __rsub__(self, other):
+        return (-self).__add__(other)
+
+    def __truediv__(self, other):
+        """Dunder method for dividing another variable or scalar/vector
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to divide self.var.
+
+         RETURNS
+         ========
+         output: Variable, a new variable that self.var divides `other`.
+
+         EXAMPLES
+         =========
+         divides scalar
+         >>> x = Variable(3, [1])
+         >>> x / 3
+         Variable(1, 1/3)
+
+         divides another variable - X
+         >>> x = Variable(3, [1])
+         >>> x / Variable(4, [1])
+         Variable(3/4, [1/16])
+
+         divides another variable - Y
+         >>> x = Variable(3, [1, 0])
+         >>> x / Variable(4, [0, 1])
+         Variable(3/4, [1/4, -3/16])
+        """
+        try:
+            return Variable(self.var / other.var, (self.der * other.var - self.var * other.der) / (other.var ** 2))
+        except AttributeError:
+            return Variable(self.var / other, self.der / other)
 
     def sin(self):
         f = Reverse_Mode(np.sin(self.var))
@@ -83,6 +131,30 @@ class Reverse_Mode:
         self.child.append((np.exp(self.var), f))
         return f
 
+    def tanh(self):
+        """Returns the hyperbolic tangent of the Reverse_Mode object.
+
+        INPUTS
+        =======
+        self: a Reverse_Mode object
+
+        Returns
+        =========
+        output: a new Reverse_Mode object after the operation
+
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.tanh(x)
+        Variable(0.761594155956 , [ 0.41997434])
+        """
+
+        # don't need to check for domain values
+        f = Reverse_Mode(np.tanh(self.var))
+        tanh_der = 1 / np.power(np.cosh(self.var), 2)
+        self.child.append((tanh_der, f))
+
+        return f
 
     def __repr__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der)
@@ -148,3 +220,22 @@ f.derivative(seed = 1)
 I'm currently recomputing things in this
 
 '''
+
+if __name__ == '__main__':
+    x = Reverse_Mode(1)
+    inputs = [x]
+    f = x - 4
+
+    value, check = f.derivative(inputs)
+    assert np.round(value, 4) == -3.0000
+    assert np.round(check[0], 4) == 1.0000
+
+    # x = Reverse_Mode(1)
+    # f = x
+    # inputs = [x]
+    # value, check = f.derivative(inputs)
+    # print(value, check)
+    # assert np.round(value, 4) == 13.0000
+    # assert np.round(check[0], 4) == 1.0000
+    # assert np.round(check[1], 4) == 3.0000
+    # assert np.round(check[2], 4) == 2.0000
