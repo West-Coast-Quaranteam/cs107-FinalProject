@@ -83,6 +83,11 @@ class Reverse_Mode:
     def __rsub__(self, other):
         return (-self).__add__(other)
 
+    @staticmethod
+    def inv(other):
+        self.value = 1 / var.value
+        self.grad = [(var, -var.value ** -2)]
+
     def __truediv__(self, other):
         """Dunder method for dividing another variable or scalar/vector
          INPUTS
@@ -112,26 +117,382 @@ class Reverse_Mode:
          Variable(3/4, [1/4, -3/16])
         """
         try:
-            return Variable(self.var / other.var, (self.der * other.var - self.var * other.der) / (other.var ** 2))
+            other_new = Reverse_Mode(1 / other.var)
+            other.child.append((-other.var ** -2, other_new))
+            return self * other_new
+
         except AttributeError:
-            return Variable(self.var / other, self.der / other)
+            f = Reverse_Mode(self.var / other)
+            der = 1 / other
+            self.child.append((der, f))
 
-    def sin(self):
-        f = Reverse_Mode(np.sin(self.var))
-        self.child.append((np.cos(self.var), f))
         return f
 
-    def cos(self):
-        f = Reverse_Mode(np.cos(self.var))
-        self.child.append((-np.sin(self.var), f))
+    def __rtruediv__(self, other):
+        """Dunder method for being divided by another variable or scalar/vector
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to be divided by self.var.
+
+         RETURNS
+         ========
+         output: Variable, a new variable 'other' divides self.var.
+
+         EXAMPLES
+         =========
+         divided by scalar
+         >>> x = Variable(3, [1])
+         >>> 2 / x
+         Variable(2/3, [-2/9])
+
+         divided by another variable - X
+         >>> x = Variable(4, [1])
+         >>> Variable(3, [1]) / x
+         Variable(3/4, [1/16])
+
+         divided by another variable - Y
+         >>> x = Variable(4, [0, 1])
+         >>> Variable(3, [1, 0]) / x
+         Variable(3/4, [1/4, -3/16])
+        """
+        f = Reverse_Mode(other / self.var)
+        der = other * (-self.var ** (-2)) * 1
+        self.child.append((der, f))
+
         return f
 
-    def exp(self):
-        f = Reverse_Mode(np.exp(self.var))
-        self.child.append((np.exp(self.var), f))
+    def __eq__(self, other):
+        """Dunder method for checking equality
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to be checked if it is equal
+
+         RETURNS
+         ========
+         output: bool, True/False, Equal/Not Equal.
+
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) == 3
+         False
+
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(3, [1])
+         >>> X == Y
+         True
+        """
+        try:
+            out = (self.var == other.var)
+        except AttributeError:
+            print('A scalar and a Variable type does not equal')
+            out = False
+        return out
+
+    def __ne__(self, other):
+        """Dunder method for checking inequality
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable, to be checked if it is not equal
+
+         RETURNS
+         ========
+         output: bool, True/False, Not Equal/ Equal.
+
+         EXAMPLES
+         =========
+         >> 3 != Variable(3, [1])
+         True
+
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(3, [1])
+         >>> Y != X
+         False
+        """
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+        """Dunder method for less than
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+
+         RETURNS
+         ========
+         out: bool, True/False, less than/ not less than.
+
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) < 3
+         False
+
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X < Y
+         True
+        """
+        try:
+            return self.var < other.var
+        except AttributeError:
+            return self.var < other
+
+    def __le__(self, other):
+        """Dunder method for less than or equal to
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+
+         RETURNS
+         ========
+         output (bool): True/False, less than or equal to/ not less than or equal to.
+
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) <= 3
+         True
+
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X <= Y
+         True
+        """
+        try:
+            return self.var <= other.var
+        except AttributeError:
+            return self.var <= other
+
+    def __gt__(self, other):
+        """Dunder method for greater than
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+
+         RETURNS
+         ========
+         output (bool): True/False, greater than/ not greater than.
+
+         EXAMPLES
+         =========
+         >> Variable(3, [1]) > 3
+         False
+
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X > Y
+         False
+        """
+        try:
+            return self.var > other.var
+        except AttributeError:
+            return self.var > other
+
+    def __ge__(self, other):
+        """Dunder method for greater than or equal to
+         INPUTS
+         =======
+         self: Variable object
+         other: int/float/Variable
+
+         RETURNS
+         ========
+         output (bool): True/False, greater than or equal to/ not greater than or equal to.
+
+         EXAMPLES
+         =========
+         >>> Variable(3, [1]) >= 3
+         True
+
+         >>> X = Variable(3, 1)
+         >>> Y = Variable(4, [1])
+         >>> X >= Y
+         False
+        """
+        try:
+            return self.var >= other.var
+        except AttributeError:
+            return self.var >= other
+
+    def __abs__(self):
+        """Dunder method for absolute value
+         INPUTS
+         =======
+         self: Variable object
+
+         RETURNS
+         ========
+         output: Variable object after taking the absolute value
+
+         EXAMPLES
+         =========
+         >>> abs(ariable(-3, [-1]))
+         Variable(3, [1])
+        """
+        f = Reverse_Mode(abs(self.var))
+        multiplier = 1
+        if self.var < 0 :
+            multiplier = -1
+        der = self.var / abs(self.var) * multiplier
+        self.child.append((der, f))
         return f
 
-    def tanh(self):
+    def __pow__(self, exponent):
+        """Returns the power of the Variable object to the exponent.
+         INPUTS
+         =======
+         self: Variable object
+         exponent: int/float, to the power of
+
+         RETURNS
+         ========
+         power: a new Variable object after raising `self` to the power of `exponent`
+
+         NOTES
+         =====
+         currently the base has to be > 0 and exponent has to be >= 1.
+         complex numbers not supported
+         EXAMPLES
+         =========
+         >>> x = Variable(3, 1)
+         >>> x ** 2.0
+         Variable(9, [6])
+         """
+        # `self` ^ other
+        # check domain
+        if self.var <= 0 and exponent < 1:
+            raise ValueError('Base has to be > 0, and the exponent has to be >= 1')
+
+        f = Reverse_Mode(self.var ** exponent)
+        der = 1 * exponent * (self.var ** (exponent - 1))
+        self.child.append((der, f))
+        return f
+
+    def __rpow__(self, other):
+        """Returns the power of the `other` object to `self`.
+         INPUTS
+         =======
+         self: Variable object, to the power of
+         other: int/float, base
+
+         RETURNS
+         ========
+         power: a new Variable object after raising `other` to the power of `self`
+         NOTES
+         =====
+         currently do not support when `self` and `other` are both Variable type
+
+         EXAMPLES
+         =========
+         >>> x = Variable(3, 1)
+         >>> 2.0 ** x
+         Variable(8, [5.545])
+         """
+        # `other` ^ `self`
+        if other < 0 and self.var < 1:
+            raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
+        f = Reverse_Mode(other ** self.var)
+        der = (other ** self.var) * np.log(other) * 1
+        self.child.append((der, f))
+        return f
+
+    @staticmethod
+    def sqrt(variable):
+        """Returns the square root of `variable`.
+         INPUTS
+         =======
+         variable: Variable object/int/float
+
+         RETURNS
+         ========
+         sqrt: a new Variable object after taking square root of `variable`
+
+         EXAMPLES
+         =========
+         >>> x = Variable(3)
+         >>> Variable.sqrt(x)
+         Variable(1.732, [0.289])
+         """
+        if variable < 0:
+            raise ValueError('Cannot take sqrt of a negative value')
+        return variable ** (1 / 2)
+
+    @staticmethod
+    def exp(variable):
+        """Returns e to the value.
+         INPUTS
+         =======
+         variable: Variable object/int/float
+
+         RETURNS
+         ========
+         sqrt: a new Variable object after raising e to the value
+
+         EXAMPLES
+         =========
+         >>> x = Variable(5)
+         >>> Variable.exp(x)
+         Variable(1.732, [0.289])
+         """
+        try:
+            f = Reverse_Mode(np.exp(variable.var))
+            variable.child.append((np.exp(variable.var), f))
+        except AttributeError:
+            f = np.exp(variable)
+
+        return f
+
+    @staticmethod
+    def log(variable):
+        """Returns the natural log of `variable`.
+         INPUTS
+         =======
+         variable: Variable object/int/float
+
+         RETURNS
+         ========
+         sqrt: a new Variable object after taking natural log
+
+         EXAMPLES
+         =========
+         >>> x = Variable(3)
+         >>> Variable.log(x)
+         Variable(1.732, [0.289])
+         """
+        if variable <= 0:
+            raise ValueError('Please input a positive number')
+        try:
+            f = Reverse_Mode(np.log(variable.var))
+            der = (1.0 / variable.var) * 1
+            variable.child.append((der, f))
+            return f
+        except AttributeError:
+            return np.log(variable)
+
+    @staticmethod
+    def sin(variable):
+        try:
+            f = Reverse_Mode(np.sin(variable.var))
+            variable.child.append((np.cos(variable.var), f))
+        except AttributeError:
+            f = np.sin(variable)
+
+        return f
+
+    @staticmethod
+    def cos(variable):
+        try:
+            f = Reverse_Mode(np.cos(variable.var))
+            variable.child.append((-np.sin(variable.var), f))
+        except AttributeError:
+            f = np.cos(variable)
+        return f
+
+    @staticmethod
+    def tanh(variable):
         """Returns the hyperbolic tangent of the Reverse_Mode object.
 
         INPUTS
@@ -150,9 +511,12 @@ class Reverse_Mode:
         """
 
         # don't need to check for domain values
-        f = Reverse_Mode(np.tanh(self.var))
-        tanh_der = 1 / np.power(np.cosh(self.var), 2)
-        self.child.append((tanh_der, f))
+        try:
+            f = Reverse_Mode(np.tanh(variable.var))
+            der = 1 / np.power(np.cosh(variable.var), 2)
+            variable.child.append((der, f))
+        except AttributeError:
+            f = np.tanh(variable)
 
         return f
 
@@ -222,20 +586,10 @@ I'm currently recomputing things in this
 '''
 
 if __name__ == '__main__':
-    x = Reverse_Mode(1)
+    x = Reverse_Mode(3)
+    f = 2 / x
     inputs = [x]
-    f = x - 4
-
     value, check = f.derivative(inputs)
-    assert np.round(value, 4) == -3.0000
-    assert np.round(check[0], 4) == 1.0000
-
-    # x = Reverse_Mode(1)
-    # f = x
-    # inputs = [x]
-    # value, check = f.derivative(inputs)
-    # print(value, check)
-    # assert np.round(value, 4) == 13.0000
-    # assert np.round(check[0], 4) == 1.0000
-    # assert np.round(check[1], 4) == 3.0000
-    # assert np.round(check[2], 4) == 2.0000
+    print(check)
+    assert value == 2 / 3
+    assert check[0] == -2 / 9
