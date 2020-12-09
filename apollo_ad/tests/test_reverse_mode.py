@@ -315,3 +315,6 @@ class TestReverse:
         value, grads = f.derivative(inputs)
         assert np.round(value, 4) == 1.9901
         assert np.round(grads[0], 4) == 0.0197
+
+        # check constant
+        assert Reverse_Mode.tanh(3) == np.tanh(3)

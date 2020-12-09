@@ -1,6 +1,7 @@
 import numpy as np
 import cProfile
 
+
 class Reverse_Mode:
     def __init__(self, var):
         self.var = var
@@ -25,7 +26,14 @@ class Reverse_Mode:
         self.der = seed
         value = self.var
         derivatives = np.array([i.gradient() for i in inputs])
+        self._reset(inputs)
+
         return value, derivatives
+
+    @staticmethod
+    def _reset(inputs):
+        for i in inputs:
+            i.der = None
 
     def __add__(self, other):
         try:
@@ -82,11 +90,6 @@ class Reverse_Mode:
 
     def __rsub__(self, other):
         return (-self).__add__(other)
-
-    @staticmethod
-    def inv(other):
-        self.value = 1 / var.value
-        self.grad = [(var, -var.value ** -2)]
 
     def __truediv__(self, other):
         """Dunder method for dividing another variable or scalar/vector
@@ -773,3 +776,59 @@ f.derivative(seed = 1)
 I'm currently recomputing things in this
 
 '''
+
+class Functions:
+    def __init__(self, function, inputs):
+        #         """Initiate a function variable.
+        #          INPUTS
+        #          =======
+        #          self: Variable object
+        #          var: float/int, the value of this variable
+        #          seed: int/list/array, the seed vector (derivative from the parents)
+        #          RETURNS
+        #          ========
+        #          EXAMPLES
+        #          =========
+        #          # multiple functions
+        #          >> x = Variable(3, [1, 0])
+        #          >> y = Variable(4, [0, 1])
+        #          >> f1 =  Variable.cos(x) + y ** 2
+        #          >> f2 = 2 * Variable.log(y) - Variable.sqrt(x)/3
+        #          >> z = Functions([f1, f2])
+        #          Values: [XXX, XXX]
+        #          Derivative:
+        #          [ [ xxx, xxx],
+        #            [ xxx, xxx] ]
+
+        #          """
+        #         # if isinstance(function, list):
+        #         #     check = [1 if isinstance(i, Variable) else 0 for i in var]
+        #         #     if len(check) != sum(check):
+        #         #         raise TypeError('Each function should be a variable class')
+        #         # else:
+        #         #     raise TypeError(
+        #         #         'The input should be a list of variables standing for functions')
+        self.var = np.array([i.var for i in function])
+        # this because I'm passsing in a list, we need to do a deepcopy of the list
+        # print(inputs) #
+        # deep_copy_inputs = []
+        # for _ in range(len(function)):
+        #     new_input = copy.deepcopy(inputs)
+        #     deep_copy_inputs.append(new_input)
+        # for func, i in zip(function, deep_copy_inputs):
+        #     print(func, i) # [Value: 1 , Der: None, Value: 2 , Der: None], [Value: 1 , Der: None, Value: 2 , Der: None]]
+        # for func, inp in zip(function, deep_copy_inputs):
+        #     print(func.derivative(inp[0]))
+        # deep_copy_inputs = [copy.deepcopy(inputs) for _ in range(len(function))]
+        # print(deep_copy_inputs) # [[Value: 1 , Der: None, Value: 2 , Der: None]]
+        self.der = [list(func.derivative(inputs)[1]) for func in function]
+
+if __name__ == "__main__":
+    x = Reverse_Mode(1)
+    y = Reverse_Mode(2)
+    inputs = [x, y]
+    f1 = x * y + Reverse_Mode.exp(x * y)
+    f2 = x + 3 * y
+    fcts = [f1, f2]
+    f = Functions(fcts, inputs)
+    print(f.der)
