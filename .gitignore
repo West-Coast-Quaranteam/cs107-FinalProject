@@ -9,6 +9,9 @@ __pycache__/
 #Mac-related files
 .DS_Store
 
+# VSCode related
+.vscode
+
 # Distribution / packaging
 .Python
 build/
