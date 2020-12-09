@@ -40,6 +40,14 @@ class TestReverse:
         assert np.round(check[1], 4) == -3.0000
         assert np.round(check[2], 4) == 2.0000
 
+    def test_r_sub(self):
+        x = Reverse_Mode(1)
+        f = 2 - x
+        inputs = [x]
+        value, check = f.derivative(inputs)
+        assert np.round(value, 4) == 1
+        assert np.round(check[0], 4) == -1.0000
+
     def test_truediv_rtruediv(self):
         x = Reverse_Mode(3)
         f = x / 3
@@ -220,6 +228,86 @@ class TestReverse:
         # check constant
         assert Reverse_Mode.cos(2) == np.cos(2)
 
+    def test_tangent_function(self):
+        x = Reverse_Mode(np.pi)
+        f = Reverse_Mode.tan(x)
+        v, g = f.derivative([x])
+        # However, if you specify a message with the assertion like this:
+        # assert a % 2 == 0, "value was odd, should be even"
+        # then no assertion introspection takes places at all and the message will be simply shown in the traceback.
+        assert g == [1]
+
+        x = Reverse_Mode(3 * np.pi / 2)
+        with pytest.raises(ValueError):
+            f = Reverse_Mode.tan(x)
+
+        x = Reverse_Mode(2)
+        f = 3 * Reverse_Mode.tan(x)
+        v, g = f.derivative([x])
+        assert v == 3 * np.tan(2) and np.round(g, 4) == [17.3232]
+
+        x = Reverse_Mode(np.pi)
+        f = Reverse_Mode.tan(x) * Reverse_Mode.tan(x)
+        v, g = f.derivative([x])
+        assert np.round(g[0], 5) == [0]
+
+        # checking a constant
+        assert Reverse_Mode.tan(3) == np.tan(3)
+
+    def test_arcsin(self):
+        x = Reverse_Mode(0)
+        f = Reverse_Mode.arcsin(x)
+        v, g = f.derivative([x])
+        assert v == 0.0
+        assert g == [1.]
+        # -1<= x <=1
+
+        with pytest.raises(ValueError):
+            x = Reverse_Mode(-2)
+            f = Reverse_Mode.arcsin(x)
+
+        assert Reverse_Mode.arcsin(0.5) == np.arcsin(0.5)
+
+    def test_arccos(self):
+        x = Reverse_Mode(0)
+        f = Reverse_Mode.arccos(x)
+        v, g = f.derivative([x])
+        assert v == 0.0
+        assert g == [-1.]
+
+        with pytest.raises(ValueError):
+            x = Reverse_Mode(2)
+            f = Reverse_Mode.arccos(x)
+
+        assert Reverse_Mode.arccos(0.5) == np.arccos(0.5)
+
+    def test_arctangent_function(self):
+        x = Reverse_Mode(2)
+        f = Reverse_Mode.arctan(x)
+        v, g = f.derivative([x])
+        assert v == np.arctan(2) and np.round(g[0],4) == 0.2
+
+        # check a constant
+        assert Reverse_Mode.arctan(3) == np.arctan(3)
+
+    def test_sinh_function(self):
+        x = Reverse_Mode(2)
+        f = 2 * Reverse_Mode.sinh(x)
+        v, g = f.derivative([x])
+        assert np.round(g, 4) == [7.5244] and np.round(v, 4) == 7.2537
+
+        # check a constant
+        assert Reverse_Mode.sinh(3) == np.sinh(3)
+
+    def test_cosh_function(self):
+        x = Reverse_Mode(4)
+        f = 3 * Reverse_Mode.cosh(x)
+        v, g = f.derivative([x])
+        assert np.round(v, 4) == 81.9247 and np.round(g, 4) == [81.8698]
+
+        # check a constant
+        assert Reverse_Mode.cosh(3) == np.cosh(3)
+
     def test_tanh(self):
         x = Reverse_Mode(3)
         f = 2 * Reverse_Mode.tanh(x)
@@ -227,7 +315,3 @@ class TestReverse:
         value, grads = f.derivative(inputs)
         assert np.round(value, 4) == 1.9901
         assert np.round(grads[0], 4) == 0.0197
-
-
-if __name__ == "__main__":
-    TestReverse.test_subtraction()

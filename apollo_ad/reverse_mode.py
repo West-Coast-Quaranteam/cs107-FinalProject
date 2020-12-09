@@ -492,6 +492,195 @@ class Reverse_Mode:
         return f
 
     @staticmethod
+    def tan(variable):
+        """Returns the tangent of the Variable object.
+        INPUTS
+        =======
+        variable: Variable object/int/float
+
+        Returns
+        =========
+        output: a new Variable object after taking the tangent
+
+        EXAMPLES
+        =========
+        >>> x = Variable(np.pi)
+        >>> Variable.tan(x)
+        Variable(-1.22464679915e-16, [ 1.])
+        """
+
+        # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
+        # would typically do try-except, but due to machine precision this won't work
+        try:
+            check_domain = variable.var % np.pi == (np.pi / 2)
+            if check_domain:
+                raise ValueError(
+                    'Cannot take the tangent of this value since it is a multiple of pi/2 + (pi * n), where n is a positive integer')
+
+            new_var = np.tan(variable.var)
+            f = Reverse_Mode(new_var)
+
+            der = 1 / np.power(np.cos(variable.var), 2) * 1
+            variable.child.append((der, f))
+
+            return f
+
+        except AttributeError:
+            return np.tan(variable)
+
+    @staticmethod
+    def arcsin(variable):
+        """
+        Returns the arcsine of Var object.
+
+        INPUTS
+        ==========
+        variable: Variable object/int/float
+
+        Returns
+        =========
+        output: a new Variable object after taking the arcsine
+
+        Examples
+        =========
+        >>> x = Variable(0)
+        >>> Variable.arcsin(x)
+        Variable(0.0, [1.])
+        """
+        try:
+            if variable.var > 1 or variable.var < -1:
+                raise ValueError('Please input -1 <= x <=1')
+
+            else:
+                f = Reverse_Mode(np.arcsin(variable.var))
+                der = 1 / np.sqrt(1 - (variable.var ** 2))
+                variable.child.append((der, f))
+
+            return f
+        except AttributeError:
+            return np.arcsin(variable)
+
+    @staticmethod
+    def arccos(variable):
+        """
+        Returns the arccosine of Var object.
+
+        INPUTS
+        ==========
+        variable: Variable object/int/float
+
+        Returns
+        =========
+        output: a new Variable object after taking the arccosine
+
+        Examples
+        =========
+        >>> x = Variable(0)
+        >>> Variable.arccos(x)
+        Variable(0.0, [-1.])
+        """
+        try:
+            if variable.var > 1 or variable.var < -1:
+                raise ValueError('Please input -1 <= x <=1')
+
+            else:
+                f = Reverse_Mode(np.arcsin(variable.var))
+                der = -1 / np.sqrt(1 - (variable.var ** 2))
+                variable.child.append((der, f))
+
+            return f
+        except AttributeError:
+            return np.arccos(variable)
+
+    @staticmethod
+    def arctan(variable):
+        """Returns the arctangent of the Variable object.
+        INPUTS
+        =======
+        variable: Variable object/int/float
+
+        Returns
+        =========
+        output: a new Variable object after taking the arctangent
+
+        EXAMPLES
+        =========
+        >>> x = Variable(np.pi)
+        >>> Variable.arctan(x)
+        Variable(1.26262725568, [ 0.09199967])
+        """
+
+        # no need to check for a value error
+        try:
+            f = Reverse_Mode(np.arctan(variable.var))
+            der = 1 / (1 + np.power(variable.var, 2)) * 1
+            variable.child.append((der, f))
+            return f
+
+        except AttributeError:
+            return np.arctan(variable)
+
+    @staticmethod
+    def sinh(variable):
+        """Returns the hyperbolic sin of the Variable object.
+
+        INPUTS
+        =======
+        variable: Variable object/int/float
+
+        Returns
+        =========
+        output: a new Variable object after taking the hyperbolic sine
+
+
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.sinh(x)
+        Variable(1.17520119364, [ 1.54308063])
+        """
+
+        # don't need to check for domain values
+        try:
+            f = Reverse_Mode(np.sinh(variable.var))
+            der = np.cosh(variable.var) * 1
+            variable.child.append((der, f))
+            return f
+
+        except AttributeError:
+            return np.sinh(variable)
+
+    @staticmethod
+    def cosh(variable):
+        """Returns the hyperbolic cosine of the Variable object.
+
+        INPUTS
+        =======
+        variable: Variable object/int/float
+
+        Returns
+        =========
+        output: a new Variable object after taking the hyperbolic cosine
+
+        EXAMPLES
+        =========
+        >>> x = Variable(1)
+        >>> Variable.cosh(x)
+        Variable(1.54308063482, [ 1.17520119])
+        """
+
+        # don't need to check for domain values
+
+        try:
+            f = Reverse_Mode(np.cosh(variable.var))
+            der = np.sinh(variable.var) * 1
+            variable.child.append((der, f))
+            return f
+
+        except AttributeError:
+            return np.cosh(variable)
+
+    @staticmethod
     def tanh(variable):
         """Returns the hyperbolic tangent of the Reverse_Mode object.
 
@@ -584,12 +773,3 @@ f.derivative(seed = 1)
 I'm currently recomputing things in this
 
 '''
-
-if __name__ == '__main__':
-    x = Reverse_Mode(3)
-    f = 2 / x
-    inputs = [x]
-    value, check = f.derivative(inputs)
-    print(check)
-    assert value == 2 / 3
-    assert check[0] == -2 / 9
