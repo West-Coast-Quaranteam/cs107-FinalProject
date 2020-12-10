@@ -3,6 +3,50 @@ import string
 from apollo_ad.apollo_ad import *
 
 def apollo_ad_UI():
+    '''
+    Welcome to Apollod AD Library!
+    Enter the number of variables:
+    2
+    Enter the number of functions:
+    3
+    Type the variable name of variable No. 1: 
+    a
+    Type the value of variable a: (It must be a float)
+    3
+    Type the derivative seed of variable a. It must be a float: 
+    1
+    Type the variable name of variable No. 2: 
+    b
+    Type the value of variable b: (It must be a float)
+    2
+    Type the derivative seed of variable b. It must be a float: 
+    1
+    Type function No. 1 :
+    a + b + sin(b)
+    Type function No. 2 :
+    sqrt(a) + log(b)
+    Type function No. 3 :
+    exp(a * b) + a ** 2
+    ---- Summary ----
+    Variable(s):
+    {'a': '3', 'b': '2'}
+    Function(s): 
+    a + b + sin(b)
+    sqrt(a) + log(b)
+    exp(a * b) + a ** 2
+    ---- Computing Gradients ----
+    # of variables < # of functions ====> automatically use the forward mode!
+    ---- Output ----
+    -- Values -- 
+    Function F1: 5.909297426825682
+    Function F2: 2.4251979881288226
+    Function F3: 412.4287934927351
+    -- Gradients -- 
+    Function F1: [1.         0.58385316]
+    Function F2: [0.28867513 0.5       ]
+    Function F3: [ 812.85758699 1210.28638048]
+
+    '''
     print('Welcome to Apollod AD Library!')
     print('Enter the number of variables:')
     num_var = input()
@@ -11,16 +55,6 @@ def apollo_ad_UI():
     except:
         raise AttributeError("Please only type in integers!")
 
-    id2var = list(string.ascii_lowercase)
-    for i in range(num_var):
-        print('Type the value of variable No. ' + str(i+1) +': (It must be a float)')
-        val = input()
-        print('Type the derivative seed of variable No. ' + str(i+1) +'. It must be a float: ')
-        der = input()
-        der_ = np.zeros((num_var,))
-        der_[i] = float(der)
-        exec(f'{id2var[i]} = Variable(float(val), der_)')
-
     print('Enter the number of functions:')
     num_fct = input()
     try:
@@ -28,19 +62,49 @@ def apollo_ad_UI():
     except:
         raise AttributeError("Please only type in integers!")
 
+    if num_var <= num_fct:
+        forward_mode = True
+    else:
+        forward_mode = False
+
+    variable_input = {}
+    if forward_mode:
+        seeds = {}
+    else:
+        seeds = []
+
+    for i in range(num_var):
+        print('Type the variable name of variable No. '  + str(i+1) + ': ')
+        name = input()
+        print('Type the value of variable '+ name +': (It must be a float)')
+        val = input()
+
+        variable_input[name] = val
+
+        if forward_mode:
+            print('Type the derivative seed of variable '+ name +'. It must be a float: ')
+            der = input()
+            seeds[name] = float(der)
+
     fcts = []
-    
-    print("-- Important Note: the name of the variable in the function should follow alphabetical order. E.g. 1st variable: a; 2nd: b, ... 26th variable: z. While the UI only supports up to 26 variables, for more variables, directly use the function class. --")
-    static_methods = ['log', 'sqrt', 'exp', 'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan', 'sinh', 'cosh', 'tanh']
     for i in range(num_fct):
         print('Type function No. ' + str(i+1) +' :')
         fct = input()
-        for i in static_methods:
-            if i in fct:
-                fct = fct[:fct.find(i)] + 'Variable.' + fct[fct.find(i):]
-        fcts.append(eval(fct))
+        fcts.append(fct)
 
-    f = Functions(fcts)
+        if not forward_mode:
+            print('Type the seed of function '+ str(i+1) +'. It must be a float: ')
+            der = input()
+            seeds[i] = float(der)
+
+    print('---- Summary ----')
+    print('Variable(s):')
+    print(variable_input)
+    print('Function(s): ')
+    print('\n'.join(fcts))
+    print('---- Computing Gradients ----')
+    f = auto_diff(variable_input, fcts, seeds)
+    print('---- Output ----')
     print(f)
     return f
 

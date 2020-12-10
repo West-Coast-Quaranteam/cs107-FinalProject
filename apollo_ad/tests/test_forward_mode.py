@@ -411,3 +411,7 @@ class TestScalar:
 
         assert np.array_equal(np.around(z.var, 4), np.array([14.0511, 2.1952]))
         assert np.array_equal(np.around(z.der, 4), np.array([[-0.1411, 8.0000, 0.2837], [-0.0962, 0.5000, 0.0000]]))
+
+        with pytest.raises(TypeError):
+            x = Variable(2)
+            f=Variable.arccos(x)
