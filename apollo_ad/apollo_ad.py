@@ -631,7 +631,6 @@ class Variable:
 
     @staticmethod
     def sin(variable):
-
         """Returns the sine of Var object.
         
         INPUTS
