@@ -407,7 +407,7 @@ class TestForward:
         z = auto_diff(vars, fcts)
 
         assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
-        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794,  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
 
         with pytest.raises(AttributeError):
             pass
@@ -418,7 +418,7 @@ class TestForward:
         z = Forward(vars, fcts)
 
         assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
-        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794,  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
 
         with pytest.raises(TypeError):
             pass

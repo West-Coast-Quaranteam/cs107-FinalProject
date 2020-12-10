@@ -54,50 +54,51 @@ UI()
 
 <details>
   <summary>Click here for an UI interaction example!</summary>
-  
-	```
-	Welcome to Apollod AD Library!
-	Enter the number of variables:
-	2
-	Enter the number of functions:
-	3
-	Type the variable name of variable No. 1: 
-	a
-	Type the value of variable a: (It must be a float)
-	3
-	Type the derivative seed of variable a. It must be a float: 
-	1
-	Type the variable name of variable No. 2: 
-	b
-	Type the value of variable b: (It must be a float)
-	2
-	Type the derivative seed of variable b. It must be a float: 
-	1
-	Type function No. 1 :
-	a + b + sin(b)
-	Type function No. 2 :
-	sqrt(a) + log(b)
-	Type function No. 3 :
-	exp(a * b) + a ** 2
-	---- Summary ----
-	Variable(s):
-	{'a': '3', 'b': '2'}
-	Function(s): 
-	a + b + sin(b)
-	sqrt(a) + log(b)
-	exp(a * b) + a ** 2
-	---- Computing Gradients ----
-	# of variables < # of functions ====> automatically use the forward mode!
-	---- Output ----
-	-- Values -- 
-	Function F1: 5.909297426825682
-	Function F2: 2.4251979881288226
-	Function F3: 412.4287934927351
-	-- Gradients -- 
-	Function F1: [1.         0.58385316]
-	Function F2: [0.28867513 0.5       ]
-	Function F3: [ 812.85758699 1210.28638048]
-	```
+
+
+```
+Welcome to Apollod AD Library!
+Enter the number of variables:
+2
+Enter the number of functions:
+3
+Type the variable name of variable No. 1: 
+a
+Type the value of variable a: (It must be a float)
+3
+Type the derivative seed of variable a. It must be a float: 
+1
+Type the variable name of variable No. 2: 
+b
+Type the value of variable b: (It must be a float)
+2
+Type the derivative seed of variable b. It must be a float: 
+1
+Type function No. 1 :
+a + b + sin(b)
+Type function No. 2 :
+sqrt(a) + log(b)
+Type function No. 3 :
+exp(a * b) + a ** 2
+---- Summary ----
+Variable(s):
+{'a': '3', 'b': '2'}
+Function(s): 
+a + b + sin(b)
+sqrt(a) + log(b)
+exp(a * b) + a ** 2
+---- Computing Gradients ----
+# of variables < # of functions ====> automatically use the forward mode!
+---- Output ----
+-- Values -- 
+Function F1: 5.909297426825682
+Function F2: 2.4251979881288226
+Function F3: 412.4287934927351
+-- Gradients -- 
+Function F1: [1.         0.58385316]
+Function F2: [0.28867513 0.5       ]
+Function F3: [ 812.85758699 1210.28638048]
+```
 
 </details>
 
