@@ -26,14 +26,14 @@ class Reverse_Mode:
         self.der = seed
         value = self.var
         derivatives = np.array([i.gradient() for i in inputs])
-        self._reset(inputs)
+       # self._reset(inputs)
 
         return value, derivatives
 
-    @staticmethod
-    def _reset(inputs):
-        for i in inputs:
-            i.der = None
+    # @staticmethod
+    # def _reset(inputs):
+    #     for i in inputs:
+    #         i.der = None
 
     def __add__(self, other):
         try:
@@ -718,117 +718,46 @@ class Reverse_Mode:
     def __str__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der)
 
-# x = Reverse_Mode(1)
-# y = Reverse_Mode(2)
-# inputs = [x, y]
-# f1 = x*y+Reverse_Mode.exp(x*y)
-# f2 = x + 3 * y
-# value, check = f.derivative(inputs)
 
-# x = Reverse_Mode(1)
-# y = Reverse_Mode(2)
-# ind_vars = [x, y]
-# f = x*y+Reverse_Mode.exp(x*y)
-# # for i in ind_vars:
-# #     print(i.grad())
-# check = f.derivative([x, y])
-# print(check[0])  # [16.7781122  8.3890561]
-# #cProfile.run('f.derivative([x,y])')
-
-
-# HAVING ISSUES WITH NEGATION/SUBTRACTION
-# x = Reverse_Mode(2)
-# y = Reverse_Mode(3)
-
-# b = x-4
-# f = b-y
-# print(f.var)
-# print(y.grad())
-
-
-'''
-MY CONCLUSION IS THAT IF YOU DON'T HAVE A CHILD NODE, THEN YOU'RE THE FUNCTION
-BASICALLY JUST NEED TO GET THE WEIGHT FOR THE SPECIFIC OPERATION, AND THEN CALL RECURSION UNTIL I GET TO REVERSE_MODE INSTANCE THAT HAS NO CHILDREN
-
-    EXAMPLES
-    =========
-    # multiple functions
-    >> x = Variable(3, [1, 0])
-    >> y = Variable(4, [0, 1])
-    >> f1 =  Variable.cos(x) + y ** 2
-    >> f2 = 2 * Variable.log(y) - Variable.sqrt(x)/3 
-    >> z = Functions([f1, f2])
-    Values: [XXX, XXX]
-    Derivative: 
-    [ [ xxx, xxx],
-    [ xxx, xxx] ]
-
-
-With forward mode, you only have to call everything once and don't have to store anything
-With reverse mode, need to store the input variables
-
-x = Reverse_Mode(1)
-y = Reverse_Mode(2)
-f = x * y + Variable.exp(x*y)
-f.derivative(seed = 1)
-
-
-I'm currently recomputing things in this
-
-'''
 
 class Functions:
     def __init__(self, function, inputs):
-        #         """Initiate a function variable.
-        #          INPUTS
-        #          =======
-        #          self: Variable object
-        #          var: float/int, the value of this variable
-        #          seed: int/list/array, the seed vector (derivative from the parents)
-        #          RETURNS
-        #          ========
-        #          EXAMPLES
-        #          =========
-        #          # multiple functions
-        #          >> x = Variable(3, [1, 0])
-        #          >> y = Variable(4, [0, 1])
-        #          >> f1 =  Variable.cos(x) + y ** 2
-        #          >> f2 = 2 * Variable.log(y) - Variable.sqrt(x)/3
-        #          >> z = Functions([f1, f2])
-        #          Values: [XXX, XXX]
-        #          Derivative:
-        #          [ [ xxx, xxx],
-        #            [ xxx, xxx] ]
 
-        #          """
-        #         # if isinstance(function, list):
-        #         #     check = [1 if isinstance(i, Variable) else 0 for i in var]
-        #         #     if len(check) != sum(check):
-        #         #         raise TypeError('Each function should be a variable class')
-        #         # else:
-        #         #     raise TypeError(
-        #         #         'The input should be a list of variables standing for functions')
-        self.var = np.array([i.var for i in function])
-        # this because I'm passsing in a list, we need to do a deepcopy of the list
-        # print(inputs) #
-        # deep_copy_inputs = []
-        # for _ in range(len(function)):
-        #     new_input = copy.deepcopy(inputs)
-        #     deep_copy_inputs.append(new_input)
-        # for func, i in zip(function, deep_copy_inputs):
-        #     print(func, i) # [Value: 1 , Der: None, Value: 2 , Der: None], [Value: 1 , Der: None, Value: 2 , Der: None]]
-        # for func, inp in zip(function, deep_copy_inputs):
-        #     print(func.derivative(inp[0]))
-        # deep_copy_inputs = [copy.deepcopy(inputs) for _ in range(len(function))]
-        # print(deep_copy_inputs) # [[Value: 1 , Der: None, Value: 2 , Der: None]]
-        self.der = [list(func.derivative(inputs)[1]) for func in function]
+        self.der = []
+        self.var = []
+        for func in function:
+            # for each function you're setting the Reverse Mode input variables
+            ind_vars = []
+            for i in inputs:
+                ind_vars.append(Reverse_Mode(i))
+
+            # how do you update the func so that it looks like ['ind_vars[0]*ind_vars[1]+Reverse_Mode.exp(ind_vars[0]*ind_vars[1])','ind_vars[0] + 3 * ind_vars[1]']?
+
+
+            # calling eval on the string function
+            f1 = eval(func)
+            var, der = f1.derivative(ind_vars)
+            # update the two attributes
+            self.var.append(var)
+            self.der.append(der)
+
+        self.der = np.array(self.der)
+        self.var = np.array(self.var)
+
+    def __repr__(self):
+        return 'Values: \n' + str(self.var) + '\n Gradients: \n' + str(self.der)
+
+    def __str__(self):
+        return 'Values: \n' + str(self.var) + '\n Gradients: \n' + str(self.der)
 
 if __name__ == "__main__":
-    x = Reverse_Mode(1)
-    y = Reverse_Mode(2)
+    x = 1
+    y = 2
     inputs = [x, y]
-    f1 = x * y + Reverse_Mode.exp(x * y)
-    f2 = x + 3 * y
-    fcts = [f1, f2]
+    # f1 = 'x * y + Reverse_Mode.exp(x * y)'
+    # f2 = 'x + 3 * y'
+    # fcts = [f1, f2]
+    fcts = ['ind_vars[0]*ind_vars[1]+Reverse_Mode.exp(ind_vars[0]*ind_vars[1])',
+            'ind_vars[0] + 3 * ind_vars[1]']
     f = Functions(fcts, inputs)
-    print(f.der)
+    print(f)
