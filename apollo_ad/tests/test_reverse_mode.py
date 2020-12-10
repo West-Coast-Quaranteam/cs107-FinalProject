@@ -340,3 +340,10 @@ class TestReverse:
             vars = {'x': 0.5, 'y': 4}
             fcts = [5, '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
             z = Reverse(vars, fcts)
+
+    def test_reverse_repr_str(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = Reverse(vars, fcts)
+        assert isinstance(z.__str__(), str) 
+        assert isinstance(z.__repr__(), str) 
