@@ -14,6 +14,10 @@ class TestReverse:
         assert np.round(value, 4) == 9.3891
         assert np.round(check[0],4) == 16.7781 and np.round(check[1], 4) == 8.3891
 
+        with pytest.raises(TypeError):
+            x = Reverse_Mode('as')
+
+
     def test_mult_add_subtract_three_inputs(self):
         x = Reverse_Mode(1)
         y = Reverse_Mode(2)
@@ -137,12 +141,17 @@ class TestReverse:
         assert value == 5 ** 3
         assert np.round(grads[0], 4) == np.round(3 * (5 ** 2), 4)
 
-    def test_pow_imaginary(self):
+    def test_pow_imaginary_invalid_exponent(self):
         # test pow when base < 0 and exponent < 1
         with pytest.raises(ValueError):
             x = Reverse_Mode(-5)
             inputs = [x]
             f = x ** -0.5
+
+        with pytest.raises(AttributeError):
+            x = Reverse_Mode(5)
+            y = x = Reverse_Mode(5)
+            f = x ** y
 
     def test_rpow(self):
         # test constant raise to a variable

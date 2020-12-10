@@ -1,17 +1,45 @@
 import numpy as np
-import cProfile
 
 
 class Reverse_Mode:
+
     def __init__(self, var):
-        self.var = var
+        """Initiate a auto diff variable in the Reverse Mode.
+          INPUTS
+          =======
+          self: Variable object
+          var: float/int, the value of this variable
+
+          RETURNS
+          ========
+
+          EXAMPLES
+          =========
+          # single var with der int
+          >>> x = Reverse_Mode(3)
+          """
+
+        if isinstance(var, (int, float)):
+            self.var = var
+        else:
+            raise TypeError('You did not enter a valid integer or float.')
+
         # need this because we need to store a form of the computational graph
         self.child = []
         self.der = None
 
     def gradient(self):
-        # when calling this on the first variable, it should be that everything is self.der = None except for the output function, which has been initialized to 1
-        # if self.der is not None, then the derivative has already been calculated for that variable, and we should just return it rather than calculating everything again
+        """Calculate the gradient down the computation graph recursively. Should not be called seperately. Used inside
+            self.derivative(*args)
+
+          INPUTS
+          =======
+          self: Reverse_Mode object
+
+          RETURNS
+          ========
+          self.der: the gradient of the current variable
+          """
 
         if self.der is None:
             # I'm using this based on the equation for lecture 12 we had in class
@@ -22,7 +50,29 @@ class Reverse_Mode:
             self.der = df_dui
         return self.der
 
-    def derivative(self, inputs, seed = 1):
+    def derivative(self, inputs, seed=1):
+        """Calcuate the gradients from the final function respect to each input variable.
+
+          INPUTS
+          =======
+          self: Reverse_Mode object
+          inputs: Reverse_Mode, each individual variable in the function
+
+          RETURNS
+          ========
+          value: the value of the computation
+          derivative: a Numpy array that contains the derivative respect to each variable
+
+          EXAMPLES
+          =========
+          # single var with der int
+          >>> x = Reverse_Mode(3), y = Reverse_Mode(4)
+          >>> f = x * y
+          >>> inputs = [x, y]
+          >>> f.derivative(inputs)
+          12, np.array([4, 3])
+          """
+
         self.der = seed
         value = self.var
         derivatives = np.array([i.gradient() for i in inputs])
@@ -36,6 +86,30 @@ class Reverse_Mode:
     #         i.der = None
 
     def __add__(self, other):
+        """Dunder method for adding another Reverse_Mode object or scalar/vector
+          INPUTS
+          =======
+          self: Reverse_Mode object
+          other: int/float/Reverse_Mode, to add on self.var.
+
+          RETURNS
+          ========
+          output: Reverse_Mode, a new variable with `other` added, also computational graph updated.
+
+          EXAMPLES
+          =========
+          add scalar
+          >>> x = Reverse_Mode(3)
+          >>> x + 3
+          Reverse_Mode(6)
+
+          add another variable - X
+          >>> x = Reverse_Mode(3)
+          >>> y = Reverse_Mode(5)
+          >>> x + y
+          Reverse_Mode(8)
+         """
+
         try:
             f = Reverse_Mode(self.var + other.var)
             other.child.append((1.0, f))
@@ -46,6 +120,24 @@ class Reverse_Mode:
         return f
 
     def __radd__(self, other):
+        """Dunder method for adding another variable or scalar/vector from left
+           INPUTS
+           =======
+           self: Reverse_Mode
+           other: int/float
+
+           RETURNS
+           ========
+           output: Reverse_Mode, a new variable with `other` added.
+
+           EXAMPLES
+           =========
+           add scalar
+           >>> x = Reverse_Mode(3)
+           >>> 3 + x
+           Variable(6)
+          """
+
         return self.__add__(other)
 
     def __neg__(self):
@@ -60,9 +152,9 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >>>
-         >>>
-
+         >>> x = Reverse_Mode(4)
+         >>> -x
+         Reverse_Mode(-4)
         """
 
         f = Reverse_Mode(-self.var)
@@ -70,6 +162,30 @@ class Reverse_Mode:
         return f
 
     def __mul__(self, other):
+        """Dunder method for multiplying another variable or scalar/vector
+          INPUTS
+          =======
+          self: Reverse_Mode object
+          other: int/float/Reverse_Mode, to multiply on self.var.
+
+          RETURNS
+          ========
+          output: Reverse_Mode, a new variable with `other` multiplied.
+
+          EXAMPLES
+          =========
+          multiplies scalar
+          >>> x = Reverse_Mode(3)
+          >>> x * 3
+          Reverse_Mode(9)
+
+          multiplies another variable - Y
+          >> x = Reverse_Mode(3)
+          >> y = Reverse_Mode(5)
+          >> x * y
+          Reverse_Mode(15)
+         """
+
         try:
             f = Reverse_Mode(self.var * other.var)
             self.child.append((other.var, f))
@@ -80,45 +196,105 @@ class Reverse_Mode:
         return f
 
     def __rmul__(self, other):
+        """Dunder method for multiplying another variable or scalar from left
+         INPUTS
+         =======
+         self: Reverse_Mode
+         other: int/float
+
+         RETURNS
+         ========
+         output: Reverse_Mode, a new variable with `other` multiplied.
+
+         EXAMPLES
+         =========
+         multiplies scalar
+         >>> x = Reverse_Mode(3)
+         >>> 3 * x
+         Reverse_Mode(9)
+        """
+
         return self.__mul__(other)
 
-# HAVING ISSUES WITH NEGATION/SUBTRACTION
-# UPDATE: ISSUES FIXED. BY HAOXIN
-
     def __sub__(self, other):
+        """Dunder method for subtracting another variable or scalar/vector
+           INPUTS
+           =======
+           self: Reverse_Mode object
+           other: int/float/Reverse_Mode, to subtract from self.var.
+
+           RETURNS
+           ========
+           output: Reverse_Mode, a new variable that self.var subtracts `other`.
+
+           EXAMPLES
+           =========
+           subtracts scalar
+           >>> x = Reverse_Mode(10)
+           >>> x - 3
+           Reverse_Mode(7)
+
+           multiplies another variable - X
+           >>> x = Reverse_Mode(3, [1])
+           >>> y = Reverse_Mode(2, [1])
+           >>> x * y
+           Reverse_Mode(6)
+          """
+
         return self.__add__(-other)
 
     def __rsub__(self, other):
+        """Dunder method for subtracted by another variable or scalar/vector
+          INPUTS
+          =======
+          self: Variable object
+          other: int/float, to subtract on self.var.
+
+          RETURNS
+          ========
+          var: Reverse_Mode, a new variable that `other` subtracts self.var.
+
+          EXAMPLES
+          =========
+          subtracted by scalar
+          >>> x = Reverse_Mode(3, [1])
+          >>> 3 - x
+          Reverse_Mode(0)
+
+          subtracted by another variable - X
+          >>> x = Reverse_Mode(3)
+          >>> y = Reverse_Mode(2)
+          >>> x - y
+          Reverse_Mode(1)
+         """
+
         return (-self).__add__(other)
 
     def __truediv__(self, other):
         """Dunder method for dividing another variable or scalar/vector
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable, to divide self.var.
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode, to divide self.var.
 
          RETURNS
          ========
-         output: Variable, a new variable that self.var divides `other`.
+         output: Reverse_Mode, a new variable that self.var divides `other`.
 
          EXAMPLES
          =========
          divides scalar
-         >>> x = Variable(3, [1])
+         >>> x = Reverse_Mode(3)
          >>> x / 3
-         Variable(1, 1/3)
-
-         divides another variable - X
-         >>> x = Variable(3, [1])
-         >>> x / Variable(4, [1])
-         Variable(3/4, [1/16])
+         Reverse_Mode(1)
 
          divides another variable - Y
-         >>> x = Variable(3, [1, 0])
-         >>> x / Variable(4, [0, 1])
-         Variable(3/4, [1/4, -3/16])
+         >>> x = Reverse_Mode(3)
+         >>> y = Reverse_Mode(1)
+         >>> x / y
+         Reverse_Mode(3)
         """
+
         try:
             other_new = Reverse_Mode(1 / other.var)
             other.child.append((-other.var ** -2, other_new))
@@ -135,30 +311,21 @@ class Reverse_Mode:
         """Dunder method for being divided by another variable or scalar/vector
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable, to be divided by self.var.
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode, to be divided by self.var.
 
          RETURNS
          ========
-         output: Variable, a new variable 'other' divides self.var.
+         output: Reverse_Mode, a new variable 'other' divides self.var.
 
          EXAMPLES
          =========
          divided by scalar
-         >>> x = Variable(3, [1])
+         >>> x = Reverse_Mode(3, [1])
          >>> 2 / x
-         Variable(2/3, [-2/9])
-
-         divided by another variable - X
-         >>> x = Variable(4, [1])
-         >>> Variable(3, [1]) / x
-         Variable(3/4, [1/16])
-
-         divided by another variable - Y
-         >>> x = Variable(4, [0, 1])
-         >>> Variable(3, [1, 0]) / x
-         Variable(3/4, [1/4, -3/16])
+         Reverse_Mode(2/3)
         """
+
         f = Reverse_Mode(other / self.var)
         der = other * (-self.var ** (-2)) * 1
         self.child.append((der, f))
@@ -169,8 +336,8 @@ class Reverse_Mode:
         """Dunder method for checking equality
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable, to be checked if it is equal
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode, to be checked if it is equal
 
          RETURNS
          ========
@@ -178,14 +345,15 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >> Variable(3, [1]) == 3
+         >>> Reverse_Mode(3) == 3
          False
 
-         >>> X = Variable(3, 1)
-         >>> Y = Variable(3, [1])
+         >>> X = Reverse_Mode(3)
+         >>> Y = Reverse_Mode(3)
          >>> X == Y
          True
         """
+
         try:
             out = (self.var == other.var)
         except AttributeError:
@@ -194,11 +362,11 @@ class Reverse_Mode:
         return out
 
     def __ne__(self, other):
-        """Dunder method for checking inequality
+        """Dunder method for checking inequality. equality means self.var == other.var/other
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable, to be checked if it is not equal
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode, to be checked if it is not equal
 
          RETURNS
          ========
@@ -206,22 +374,23 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >> 3 != Variable(3, [1])
+         >> Reverse_Mode(3) == 3
          True
 
-         >>> X = Variable(3, 1)
-         >>> Y = Variable(3, [1])
+         >>> X = Reverse_Mode(4)
+         >>> Y = Reverse_Mode(3)
          >>> Y != X
          False
         """
+
         return not self.__eq__(other)
 
     def __lt__(self, other):
         """Dunder method for less than
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode
 
          RETURNS
          ========
@@ -229,14 +398,15 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >> Variable(3, [1]) < 3
+         >> Reverse_Mode(3) < 3
          False
 
-         >>> X = Variable(3, 1)
-         >>> Y = Variable(4, [1])
+         >>> X = Reverse_Mode(3)
+         >>> Y = Reverse_Mode(4)
          >>> X < Y
          True
         """
+
         try:
             return self.var < other.var
         except AttributeError:
@@ -246,8 +416,8 @@ class Reverse_Mode:
         """Dunder method for less than or equal to
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode
 
          RETURNS
          ========
@@ -255,14 +425,15 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >> Variable(3, [1]) <= 3
+         >> Reverse_Mode(3) <= 3
          True
 
-         >>> X = Variable(3, 1)
-         >>> Y = Variable(4, [1])
+         >>> X = Reverse_Mode(5)
+         >>> Y = Reverse_Mode(4)
          >>> X <= Y
-         True
+         False
         """
+
         try:
             return self.var <= other.var
         except AttributeError:
@@ -272,8 +443,8 @@ class Reverse_Mode:
         """Dunder method for greater than
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode
 
          RETURNS
          ========
@@ -281,14 +452,15 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >> Variable(3, [1]) > 3
+         >> Reverse_Mode(3) > 3
          False
 
-         >>> X = Variable(3, 1)
-         >>> Y = Variable(4, [1])
+         >>> X = Reverse_Mode(5)
+         >>> Y = Reverse_Mode(4)
          >>> X > Y
-         False
+         True
         """
+
         try:
             return self.var > other.var
         except AttributeError:
@@ -298,8 +470,8 @@ class Reverse_Mode:
         """Dunder method for greater than or equal to
          INPUTS
          =======
-         self: Variable object
-         other: int/float/Variable
+         self: Reverse_Mode object
+         other: int/float/Reverse_Mode
 
          RETURNS
          ========
@@ -307,14 +479,15 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >>> Variable(3, [1]) >= 3
+         >>> Reverse_Mode(3) >= 3
          True
 
-         >>> X = Variable(3, 1)
-         >>> Y = Variable(4, [1])
+         >>> X = Reverse_Mode(3)
+         >>> Y = Reverse_Mode(4)
          >>> X >= Y
          False
         """
+
         try:
             return self.var >= other.var
         except AttributeError:
@@ -324,17 +497,18 @@ class Reverse_Mode:
         """Dunder method for absolute value
          INPUTS
          =======
-         self: Variable object
+         self: Reverse_Mode object
 
          RETURNS
          ========
-         output: Variable object after taking the absolute value
+         output: Reverse_Mode object after taking the absolute value
 
          EXAMPLES
          =========
-         >>> abs(ariable(-3, [-1]))
-         Variable(3, [1])
+         >>> abs(Reverse_Mode(-3))
+         Reverse_Mode(3)
         """
+
         f = Reverse_Mode(abs(self.var))
         multiplier = 1
         if self.var < 0 :
@@ -344,30 +518,35 @@ class Reverse_Mode:
         return f
 
     def __pow__(self, exponent):
-        """Returns the power of the Variable object to the exponent.
+        """Returns the power of the Reverse_Mode object to the exponent.
          INPUTS
          =======
-         self: Variable object
+         self: Reverse_Mode object
          exponent: int/float, to the power of
 
          RETURNS
          ========
-         power: a new Variable object after raising `self` to the power of `exponent`
+         power: a new Reverse_Mode object after raising `self` to the power of `exponent`
 
          NOTES
          =====
          currently the base has to be > 0 and exponent has to be >= 1.
-         complex numbers not supported
+         complex numbers not supported. Currently not support base and exponent are Reverse_Mode objects
+
          EXAMPLES
          =========
-         >>> x = Variable(3, 1)
-         >>> x ** 2.0
-         Variable(9, [6])
+         >>> x = Reverse_Mode(3)
+         >>> x ** 2
+         Reverse_Mode(9)
          """
+
         # `self` ^ other
         # check domain
         if self.var <= 0 and exponent < 1:
             raise ValueError('Base has to be > 0, and the exponent has to be >= 1')
+
+        if isinstance(exponent, Reverse_Mode):
+            raise AttributeError('The exponent cannot be a Reverse_Mode object')
 
         f = Reverse_Mode(self.var ** exponent)
         der = 1 * exponent * (self.var ** (exponent - 1))
@@ -394,6 +573,7 @@ class Reverse_Mode:
          >>> 2.0 ** x
          Variable(8, [5.545])
          """
+
         # `other` ^ `self`
         if other < 0 and self.var < 1:
             raise ValueError('Please input a non-negative value for the base. The exponent has to be >= 1')
@@ -404,21 +584,25 @@ class Reverse_Mode:
 
     @staticmethod
     def sqrt(variable):
-        """Returns the square root of `variable`.
+        """Returns the square root of some value.
          INPUTS
          =======
-         variable: Variable object/int/float
+         variable: Reverse_Mode object/int/float
 
          RETURNS
          ========
-         sqrt: a new Variable object after taking square root of `variable`
+         sqrt: a new Reverse_Mode/int/float object after taking square root of `variable`
 
          EXAMPLES
          =========
-         >>> x = Variable(3)
-         >>> Variable.sqrt(x)
-         Variable(1.732, [0.289])
+         >>> x = Reverse_Mode(3)
+         >>> Reverse_Mode.sqrt(x)
+         Reverse_Mode(1.732)
+
+         >>> Reverse_Mode.sqrt(3)
+         1.732
          """
+
         if variable < 0:
             raise ValueError('Cannot take sqrt of a negative value')
         return variable ** (1 / 2)
@@ -436,10 +620,14 @@ class Reverse_Mode:
 
          EXAMPLES
          =========
-         >>> x = Variable(5)
-         >>> Variable.exp(x)
-         Variable(1.732, [0.289])
+         >>> x = Reverse_Mode(5)
+         >>> Reverse_Mode.exp(x)
+         Reverse_Mode(1.732)
+
+         >>> Reverse_Mode.exp(5)
+         1.732
          """
+
         try:
             f = Reverse_Mode(np.exp(variable.var))
             variable.child.append((np.exp(variable.var), f))
@@ -450,21 +638,25 @@ class Reverse_Mode:
 
     @staticmethod
     def log(variable):
-        """Returns the natural log of `variable`.
+        """Returns the natural log of some value.
          INPUTS
          =======
-         variable: Variable object/int/float
+         variable: Reverse_Mode object/int/float
 
          RETURNS
          ========
-         sqrt: a new Variable object after taking natural log
+         sqrt: a new Reverse_Mode object after taking natural log
 
          EXAMPLES
          =========
-         >>> x = Variable(3)
-         >>> Variable.log(x)
-         Variable(1.732, [0.289])
+         >>> x = Reverse_Mode(3)
+         >>> Reverse_Mode.log(x)
+         Variable(1.732)
+
+         >>> Reverse_Mode.log(3)
+         1.732
          """
+
         if variable <= 0:
             raise ValueError('Please input a positive number')
         try:
@@ -477,6 +669,23 @@ class Reverse_Mode:
 
     @staticmethod
     def sin(variable):
+        """Returns the sine of variable.
+
+         INPUTS
+         ==========
+         variable: Reverse_Mode object/int/float
+
+         Returns
+         =========
+         output: a new Reverse_Mode/int/float object after taking the sine
+
+         Examples
+         >>> x = Reverse_Mode(0)
+         >>> Reverse_Mode.sin(x)
+         Reverse_Mode(0.0)
+         =========
+         """
+
         try:
             f = Reverse_Mode(np.sin(variable.var))
             variable.child.append((np.cos(variable.var), f))
@@ -487,6 +696,22 @@ class Reverse_Mode:
 
     @staticmethod
     def cos(variable):
+        """Returns the sine of variable.
+
+         INPUTS
+         ==========
+         variable: Reverse_Mode object/int/float
+
+         Returns
+         =========
+         output: a new Reverse_Mode/int/float object after taking the sine
+
+         Examples
+         >>> x = Reverse_Mode(0)
+         >>> Reverse_Mode.sin(x)
+         Reverse_Mode(0.0)
+         =========
+         """
         try:
             f = Reverse_Mode(np.cos(variable.var))
             variable.child.append((-np.sin(variable.var), f))
@@ -496,20 +721,20 @@ class Reverse_Mode:
 
     @staticmethod
     def tan(variable):
-        """Returns the tangent of the Variable object.
+        """Returns the tangent of the variable.
         INPUTS
         =======
-        variable: Variable object/int/float
+        variable: Reverse_Mode object/int/float
 
         Returns
         =========
-        output: a new Variable object after taking the tangent
+        output: a new Reverse_Mode object after taking the tangent
 
         EXAMPLES
         =========
-        >>> x = Variable(np.pi)
-        >>> Variable.tan(x)
-        Variable(-1.22464679915e-16, [ 1.])
+        >>> x = Reverse_Mode(np.pi)
+        >>> Reverse_Mode.tan(x)
+        Reverse_Mode(-1.22464679915e-16)
         """
 
         # need to check that self.var is not a multiple of pi/2 + (pi * n), where n is a positive integer
@@ -534,22 +759,23 @@ class Reverse_Mode:
     @staticmethod
     def arcsin(variable):
         """
-        Returns the arcsine of Var object.
+        Returns the arcsine of variable.
 
         INPUTS
         ==========
-        variable: Variable object/int/float
+        variable: Reverse_Mode object/int/float
 
         Returns
         =========
-        output: a new Variable object after taking the arcsine
+        output: a new Reverse_Mode object after taking the arcsine
 
         Examples
         =========
-        >>> x = Variable(0)
-        >>> Variable.arcsin(x)
-        Variable(0.0, [1.])
+        >>> x = Reverse_Mode(0)
+        >>> Reverse_Mode.arcsin(x)
+        Reverse_Mode(0.0)
         """
+
         try:
             if variable.var > 1 or variable.var < -1:
                 raise ValueError('Please input -1 <= x <=1')
@@ -566,22 +792,23 @@ class Reverse_Mode:
     @staticmethod
     def arccos(variable):
         """
-        Returns the arccosine of Var object.
+        Returns the arccosine of variable.
 
         INPUTS
         ==========
-        variable: Variable object/int/float
+        variable: Reverse_Mode object/int/float
 
         Returns
         =========
-        output: a new Variable object after taking the arccosine
+        output: a new Reverse_Mode object after taking the arccosine
 
         Examples
         =========
-        >>> x = Variable(0)
-        >>> Variable.arccos(x)
-        Variable(0.0, [-1.])
+        >>> x = Reverse_Mode(0)
+        >>> Reverse_Mode.arccos(x)
+        Reverse_Mode(0.0)
         """
+
         try:
             if variable.var > 1 or variable.var < -1:
                 raise ValueError('Please input -1 <= x <=1')
@@ -597,20 +824,20 @@ class Reverse_Mode:
 
     @staticmethod
     def arctan(variable):
-        """Returns the arctangent of the Variable object.
+        """Returns the arctangent of the variable.
         INPUTS
         =======
-        variable: Variable object/int/float
+        variable: Reverse_Mode object/int/float
 
         Returns
         =========
-        output: a new Variable object after taking the arctangent
+        output: a new Reverse_Mode/inft/float object after taking the arctangent
 
         EXAMPLES
         =========
-        >>> x = Variable(np.pi)
-        >>> Variable.arctan(x)
-        Variable(1.26262725568, [ 0.09199967])
+        >>> x = Reverse_Mode(np.pi)
+        >>> Reverse_Mode.arctan(x)
+        Reverse_Mode(1.26262725568)
         """
 
         # no need to check for a value error
@@ -625,22 +852,22 @@ class Reverse_Mode:
 
     @staticmethod
     def sinh(variable):
-        """Returns the hyperbolic sin of the Variable object.
+        """Returns the hyperbolic sin of the variable.
 
         INPUTS
         =======
-        variable: Variable object/int/float
+        variable: Reverse_Mode object/int/float
 
         Returns
         =========
-        output: a new Variable object after taking the hyperbolic sine
+        output: a new Reverse_Mode object/int/float after taking the hyperbolic sine
 
 
         EXAMPLES
         =========
-        >>> x = Variable(1)
-        >>> Variable.sinh(x)
-        Variable(1.17520119364, [ 1.54308063])
+        >>> x = Reverse_Mode(1)
+        >>> Reverse_Mode.sinh(x)
+        Reverse_Mode(1.17520119364)
         """
 
         # don't need to check for domain values
@@ -655,7 +882,7 @@ class Reverse_Mode:
 
     @staticmethod
     def cosh(variable):
-        """Returns the hyperbolic cosine of the Variable object.
+        """Returns the hyperbolic cosine of the Variable.
 
         INPUTS
         =======
@@ -663,13 +890,13 @@ class Reverse_Mode:
 
         Returns
         =========
-        output: a new Variable object after taking the hyperbolic cosine
+        output: a new Reverse_Mode object/int/float after taking the hyperbolic cosine
 
         EXAMPLES
         =========
-        >>> x = Variable(1)
-        >>> Variable.cosh(x)
-        Variable(1.54308063482, [ 1.17520119])
+        >>> x = Reverse_Mode(1)
+        >>> Reverse_Mode.cosh(x)
+        Reverse_Mode(1.54308063482)
         """
 
         # don't need to check for domain values
@@ -697,9 +924,9 @@ class Reverse_Mode:
 
         EXAMPLES
         =========
-        >>> x = Variable(1)
-        >>> Variable.tanh(x)
-        Variable(0.761594155956 , [ 0.41997434])
+        >>> x = Reverse_Mode(1)
+        >>> Reverse_Mode.tanh(x)
+        Reverse_Mode(0.761594155956)
         """
 
         # don't need to check for domain values
@@ -717,7 +944,6 @@ class Reverse_Mode:
 
     def __str__(self):
         return 'Value: ' + str(self.var) + ' , Der: ' + str(self.der)
-
 
 
 class Functions:
@@ -749,6 +975,7 @@ class Functions:
 
     def __str__(self):
         return 'Values: \n' + str(self.var) + '\n Gradients: \n' + str(self.der)
+
 
 if __name__ == "__main__":
     x = 1
