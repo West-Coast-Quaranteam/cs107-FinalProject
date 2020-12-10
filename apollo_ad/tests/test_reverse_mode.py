@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from ..reverse_mode import *
+from ..apollo_ad import *
 
 
 class TestReverse:
@@ -13,6 +13,10 @@ class TestReverse:
         value, check = f.derivative(inputs)
         assert np.round(value, 4) == 9.3891
         assert np.round(check[0],4) == 16.7781 and np.round(check[1], 4) == 8.3891
+
+        with pytest.raises(TypeError):
+            x = Reverse_Mode('as')
+
 
     def test_mult_add_subtract_three_inputs(self):
         x = Reverse_Mode(1)
@@ -137,12 +141,17 @@ class TestReverse:
         assert value == 5 ** 3
         assert np.round(grads[0], 4) == np.round(3 * (5 ** 2), 4)
 
-    def test_pow_imaginary(self):
+    def test_pow_imaginary_invalid_exponent(self):
         # test pow when base < 0 and exponent < 1
         with pytest.raises(ValueError):
             x = Reverse_Mode(-5)
             inputs = [x]
             f = x ** -0.5
+
+        with pytest.raises(AttributeError):
+            x = Reverse_Mode(5)
+            y = x = Reverse_Mode(5)
+            f = x ** y
 
     def test_rpow(self):
         # test constant raise to a variable
@@ -318,3 +327,14 @@ class TestReverse:
 
         # check constant
         assert Reverse_Mode.tanh(3) == np.tanh(3)
+
+    def test_reverse(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = Reverse(vars, fcts)
+
+        assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
+
+        with pytest.raises(TypeError):
+            pass

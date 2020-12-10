@@ -3,7 +3,7 @@ import numpy as np
 from ..apollo_ad import *
 
 
-class TestScalar:
+class TestForward:
 
     def test_initializer(self):
         with pytest.raises(TypeError):
@@ -401,17 +401,25 @@ class TestScalar:
 
         assert Variable.arccos(0.5) == np.arccos(0.5)
 
-    def test_functions(self):
-        x = Variable(3, [1, 0, 0])
-        y = Variable(4, [0, 1, 0])
-        z = Variable(5, [0, 0, 1])
-        f1 =  Variable.cos(x) + y ** 2 + Variable.sin(z)
-        f2 = 2 * Variable.log(y) - Variable.sqrt(x)/3 
-        z = Functions([f1, f2])
+    def test_autodiff(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = auto_diff(vars, fcts)
 
-        assert np.array_equal(np.around(z.var, 4), np.array([14.0511, 2.1952]))
-        assert np.array_equal(np.around(z.der, 4), np.array([[-0.1411, 8.0000, 0.2837], [-0.0962, 0.5000, 0.0000]]))
+        assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
+
+        with pytest.raises(AttributeError):
+            pass
+
+    def test_forward(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = Forward(vars, fcts)
+
+        assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
 
         with pytest.raises(TypeError):
-            x = Variable(2)
-            f=Variable.arccos(x)
+            pass
+

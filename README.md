@@ -13,6 +13,14 @@
 
 ## Installation (we assume you are familiar with virtual environments and Git)
 
+To install from pip:
+
+```bash
+pip install apollo_ad
+```
+
+To install from source:
+
 ```bash
 # install virtualenv
 pip install virtualenv
@@ -31,47 +39,143 @@ cd cs107-FinalProject
 
 # install requirements
 pip install -r requirements.txt
-
-# Test the package
-# From directory apollo_ad/tests/ run the module test.py
-pytest test_scalar.py
 ```
 
 ## Examples
 
-We show two examples here to use `apollo_ad`. 
+#### UI
 
-First, to calculate the derivative of y = cos(x) + x^2 at x = 2:
+We also provide an interactive session, where you can specify the variable values and functions without any coding:
 
 ```python
-from apollo_ad.apollo_ad import *
-x = Variable(2)
-y = Variable.cos(x) + x ** 2
-
-print(y) # Value: 3.5838531634528574 , Der: [3.09070257]
-print(y.var) # 3.583853163452857
-print(y.der) # [3.09070257]
-
-assert y.var == np.cos(2) + 4
-assert y.der == -np.sin(2) + 2 * 2
+from apollo_ad import UI
+UI()
 ```
 
-Second, to calculate the derivative of y = 2 * log(x) - sqrt(x) / 3 at x = 2:
+<details>
+  <summary>Click here for an UI interaction example!</summary>
+  
+	```
+	Welcome to Apollod AD Library!
+	Enter the number of variables:
+	2
+	Enter the number of functions:
+	3
+	Type the variable name of variable No. 1: 
+	a
+	Type the value of variable a: (It must be a float)
+	3
+	Type the derivative seed of variable a. It must be a float: 
+	1
+	Type the variable name of variable No. 2: 
+	b
+	Type the value of variable b: (It must be a float)
+	2
+	Type the derivative seed of variable b. It must be a float: 
+	1
+	Type function No. 1 :
+	a + b + sin(b)
+	Type function No. 2 :
+	sqrt(a) + log(b)
+	Type function No. 3 :
+	exp(a * b) + a ** 2
+	---- Summary ----
+	Variable(s):
+	{'a': '3', 'b': '2'}
+	Function(s): 
+	a + b + sin(b)
+	sqrt(a) + log(b)
+	exp(a * b) + a ** 2
+	---- Computing Gradients ----
+	# of variables < # of functions ====> automatically use the forward mode!
+	---- Output ----
+	-- Values -- 
+	Function F1: 5.909297426825682
+	Function F2: 2.4251979881288226
+	Function F3: 412.4287934927351
+	-- Gradients -- 
+	Function F1: [1.         0.58385316]
+	Function F2: [0.28867513 0.5       ]
+	Function F3: [ 812.85758699 1210.28638048]
+	```
+
+</details>
+
+#### Programming Usage
+
+`apollo_ad` expects two inputs, a dictionary with variable name as the key and variable value as the value and a list of strings where each string describes a function:
+
 
 ```python
-from apollo_ad.apollo_ad import *
-x = Variable(2) 
-y = 2 * Variable.log(x) - Variable.sqrt(x)/3
+from apollo_ad import auto_diff
+var = {'x': 0.5, 'y': 4}
+fct = ['cos(x) + y ** 2', 
+		'2 * log(y) - sqrt(x)/3', 
+		'sqrt(x)/3', 
+		'3 * sinh(x) - 4 * arcsin(x) + 5']
 
-print(y) # Value: 0.9148898403288588 , Der: [0.88214887]
-print(y.var) # 0.9148898403288588
-print(y.der) # [0.88214887]
+out = auto_diff(var, fct)
+print(out)
 
-assert np.around(y.var, 4) == np.around(2 * np.log(2) - np.sqrt(2)/3, 4)
-assert np.around(y.der, 4) == np.around(2 * 1/2 - 1/3 * 1/2 * 2**(-1/2), 4) 
+# -- Values -- 
+# Function F1: 16.87758256189037
+# Function F2: 2.5368864618442655
+# Function F3: 0.23570226039551587
+# Function F4: 4.468890814088047
+# -- Gradients -- 
+# Function F1: [-0.47942554  8.        ]
+# Function F2: [-0.23570226  0.5       ]
+# Function F3: [0.23570226 0.        ]
+# Function F4: [-1.23592426 -4.61880215]
 ```
 
-You can also run the above examples by:
+`apollo_ad` supports both forward and reverse mode in the backend, where the `auto_diff` class autoamtically detects which is the best way to use, depending on the number of inputs and outputs. You can also directly use the `Forward` and `Reverse` mode class. 
+
 ```python
-python demo.py
+from apollo_ad import Forward, Reverse
+var = {'x': 3, 'y': 4}
+fct = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3']
+out = Forward(var, fct)
+print(out)
+
+# -- Values -- 
+# Function F1: 15.010007503399555
+# Function F2: 3.2938507417182654
+# -- Gradients -- 
+# Function F1: [-0.14112001  8.        ]
+# Function F2: [0.23710829 0.5       ]
+
+var = {'x': 1, 'y': 2}
+fct = ['x * y + exp(x * y)', 'x + 3 * y']
+out = Reverse(var, fct)
+print(out)
+
+# -- Values -- 
+# Function F1: 9.38905609893065
+# Function F2: 7.0
+# -- Gradients -- 
+# Function F1: [16.7781122  8.3890561]
+# Function F2: [1. 3.]
+```
+
+You can also specify the gradients seeds. As seed in forward mode is for each variable whereas in reverse mode is for each function, we expect a dictionary for forward mode and a list for reverse mode. Here is an example:
+
+```python
+var = {'x': 3, 'y': 4}
+seed = {'x': 1, 'y': 2}
+fct = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3']
+z = auto_diff(var, fct, seed)
+# -- Values -- 
+# Function F1: 15.010007503399555
+# Function F2: 2.1952384530501554
+# -- Gradients -- 
+# Function F1: [-0.14112001 16.        ]
+# Function F2: [-0.09622504  1.        ]
+```
+
+You can also run the above examples by typing:
+
+```python
+from apollo_ad import demo
+demo()
 ```

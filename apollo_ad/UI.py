@@ -1,8 +1,8 @@
 import numpy as np
 import string
-from apollo_ad.apollo_ad import *
+from .apollo_ad import *
 
-def apollo_ad_UI():
+def UI():
     '''
     Welcome to Apollod AD Library!
     Enter the number of variables:
@@ -95,17 +95,17 @@ def apollo_ad_UI():
         if not forward_mode:
             print('Type the seed of function '+ str(i+1) +'. It must be a float: ')
             der = input()
-            seeds[i] = float(der)
+            seeds.append(float(der))
 
     print('---- Summary ----')
     print('Variable(s):')
     print(variable_input)
     print('Function(s): ')
     print('\n'.join(fcts))
+    print('Seeds(s): ')
+    print(seeds)
     print('---- Computing Gradients ----')
     f = auto_diff(variable_input, fcts, seeds)
     print('---- Output ----')
     print(f)
     return f
-
-apollo_ad_UI()
