@@ -337,4 +337,6 @@ class TestReverse:
         assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794,  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
 
         with pytest.raises(TypeError):
-            pass
+            vars = {'x': 0.5, 'y': 4}
+            fcts = [5, '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+            z = Reverse(vars, fcts)
