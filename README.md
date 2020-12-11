@@ -41,11 +41,24 @@ cd cs107-FinalProject
 pip install -r requirements.txt
 ```
 
+## Running Python Interactive Session From Command Line (we assume you have Python properly installed)
+From your command line, please run:
+```bash
+python
+```
+
+This is the prompt you should now see:
+```bash
+>>>
+```
+
+You're ready to use Apollo AD!
+
 ## Examples
 
 #### UI
 
-We also provide an interactive session, where you can specify the variable values and functions without any coding:
+We also provide a nice interface, where you can specify the variable values and functions without any coding:
 
 ```python
 from apollo_ad import UI
@@ -64,15 +77,15 @@ Enter the number of functions:
 3
 Type the variable name of variable No. 1: 
 a
-Type the value of variable a: (It must be a float)
+Type the value of variable a (Please only input a float):
 3
-Type the derivative seed of variable a. It must be a float: 
+Type the derivative seed of variable a (Please only input a float; your default input should be 1): 
 1
 Type the variable name of variable No. 2: 
 b
-Type the value of variable b: (It must be a float)
+Type the value of variable b (Please only input a float):
 2
-Type the derivative seed of variable b. It must be a float: 
+Type the derivative seed of variable b (Please only input a float; your default input should be 1): 
 1
 Type function No. 1 :
 a + b + sin(b)
@@ -159,7 +172,7 @@ print(out)
 # Function F2: [1. 3.]
 ```
 
-You can also specify the gradients seeds. As seed in forward mode is for each variable whereas in reverse mode is for each function, we expect a dictionary for forward mode and a list for reverse mode. Here is an example:
+You can also specify the seed. As the seed in forward mode is for each variable whereas in reverse mode it's for each function, we expect a dictionary for forward mode and a list for reverse mode. Here is an example:
 
 ```python
 var = {'x': 3, 'y': 4}
@@ -180,3 +193,8 @@ You can also run the above examples by typing:
 from apollo_ad import demo
 demo()
 ```
+
+## Additional Notes
+If you are trying to access the attributes of this class, please note that they will be lists, numpy arrays, or dictionaries.
+
+Most importantly, have fun and provide us feedback!

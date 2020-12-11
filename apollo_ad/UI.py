@@ -47,7 +47,7 @@ def UI():
     Function F3: [ 812.85758699 1210.28638048]
 
     '''
-    print('Welcome to Apollod AD Library!')
+    print('Welcome to the Apollo AD Library!')
     print('Enter the number of variables:')
     num_var = input()
     try:
@@ -76,13 +76,13 @@ def UI():
     for i in range(num_var):
         print('Type the variable name of variable No. '  + str(i+1) + ': ')
         name = input()
-        print('Type the value of variable '+ name +': (It must be a float)')
+        print('Type the value of variable '+ name +' (Please only input a float):')
         val = input()
 
         variable_input[name] = val
 
         if forward_mode:
-            print('Type the derivative seed of variable '+ name +'. It must be a float: ')
+            print('Type the seed of variable '+ name +' (Please only input a float; your default input should be 1): ')
             der = input()
             seeds[name] = float(der)
 
@@ -93,7 +93,7 @@ def UI():
         fcts.append(fct)
 
         if not forward_mode:
-            print('Type the seed of function '+ str(i+1) +'. It must be a float: ')
+            print('Type the seed of function ' + str(i+1) +' (Please only input a float; your default input should be 1): ')
             der = input()
             seeds.append(float(der))
 
