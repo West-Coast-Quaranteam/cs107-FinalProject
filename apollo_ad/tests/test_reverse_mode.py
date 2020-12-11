@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from ..reverse_mode import *
+from ..apollo_ad import *
 
 
 class TestReverse:
@@ -327,3 +327,23 @@ class TestReverse:
 
         # check constant
         assert Reverse_Mode.tanh(3) == np.tanh(3)
+
+    def test_reverse(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = Reverse(vars, fcts)
+
+        assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794, 8.0000], [-0.2357, 0.5000], [0.2357, 0.0000], [-1.2359, 0.0000]]))
+
+        with pytest.raises(TypeError):
+            vars = {'x': 0.5, 'y': 4}
+            fcts = [5, '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+            z = Reverse(vars, fcts)
+
+    def test_reverse_repr_str(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = Reverse(vars, fcts)
+        assert isinstance(z.__str__(), str) 
+        assert isinstance(z.__repr__(), str) 

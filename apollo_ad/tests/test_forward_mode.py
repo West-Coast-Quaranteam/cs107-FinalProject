@@ -3,7 +3,7 @@ import numpy as np
 from ..apollo_ad import *
 
 
-class TestScalar:
+class TestForward:
 
     def test_initializer(self):
         with pytest.raises(TypeError):
@@ -400,3 +400,50 @@ class TestScalar:
             f=Variable.arccos(x)
 
         assert Variable.arccos(0.5) == np.arccos(0.5)
+
+    def test_autodiff(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = auto_diff(vars, fcts)
+
+        assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794,  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
+
+        with pytest.raises(AttributeError):
+            var = {'x': 3, 'y': 4}
+            seed = [1, 2]
+            fct = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3']
+            z = auto_diff(var, fct, seed)
+
+        with pytest.raises(AttributeError):
+            var = {'x': 3, 'y': 2}
+            seed = {'x': 2, 'y': 2}
+            fct = ['cos(x) + y ** 2']
+            z = auto_diff(var, fct, seed)
+
+    def test_forward(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = Forward(vars, fcts)
+
+        assert np.array_equal(np.around(z.var, 4), np.array([16.8776, 2.5369, 0.2357, 4.4689]))
+        assert np.array_equal(np.around(z.der, 4), np.array([[-0.4794,  8. ], [-0.2357, 0.5], [0.2357, 0.], [-1.2359, -4.6188]]))
+
+        with pytest.raises(TypeError):
+            vars = {'x': 0.5, 'y': 4}
+            fcts = [5, '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+            z = Reverse(vars, fcts)
+
+    def test_repr_str(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = Forward(vars, fcts)
+        assert isinstance(z.__str__(), str) 
+        assert isinstance(z.__repr__(), str) 
+
+    def test_auto_diff_repr_str(self):
+        vars = {'x': 0.5, 'y': 4}
+        fcts = ['cos(x) + y ** 2', '2 * log(y) - sqrt(x)/3', 'sqrt(x)/3', '3 * sinh(x) - 4 * arcsin(x) + 5']
+        z = auto_diff(vars, fcts)
+        assert isinstance(z.__str__(), str) 
+        assert isinstance(z.__repr__(), str) 

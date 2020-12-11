@@ -1,2 +1,3 @@
-name = 'apollo_ad'
-name = 'reverse_mode'
+from .apollo_ad import *
+from .UI import UI
+from .demo import demo
