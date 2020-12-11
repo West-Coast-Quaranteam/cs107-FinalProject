@@ -42,12 +42,12 @@ pip install -r requirements.txt
 ```
 
 ## Running Python Interactive Session From Command Line (we assume you have Python properly installed)
-From your command line, please run:
+From your command line, please run a command similar to the one below to access the Python interactive session:
 ```bash
 python
 ```
 
-This is the prompt you should now see:
+If done correctly, this is the prompt you should now see:
 ```bash
 >>>
 ```
@@ -70,18 +70,18 @@ UI()
 
 
 ```
-Welcome to Apollod AD Library!
+Welcome to Apollo AD Library!
 Enter the number of variables:
 2
 Enter the number of functions:
 3
-Type the variable name of variable No. 1: 
+Type the variable name of variable No. 1 (Please only input a name that CANNOT be cast as an integer or float): 
 a
 Type the value of variable a (Please only input a float):
 3
 Type the derivative seed of variable a (Please only input a float; your default input should be 1): 
 1
-Type the variable name of variable No. 2: 
+Type the variable name of variable No. 2 (Please only input a name that CANNOT be cast as an integer or float): 
 b
 Type the value of variable b (Please only input a float):
 2
@@ -117,7 +117,7 @@ Function F3: [ 812.85758699 1210.28638048]
 
 #### Programming Usage
 
-`apollo_ad` expects two inputs, a dictionary with variable name as the key and variable value as the value and a list of strings where each string describes a function:
+`apollo_ad` expects two inputs: a dictionary with variable name as the key and variable value as the value, as well as a list of strings where each string describes a function:
 
 
 ```python
