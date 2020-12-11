@@ -30,8 +30,6 @@ class TestReverse:
         assert np.round(check[1], 4) == 3.0000
         assert np.round(check[2], 4) == -2.0000
 
-
-# HAVING ISSUES WITH NEGATION/SUBTRACTION
     def test_subtraction(self):
         x = Reverse_Mode(1)
         y = Reverse_Mode(2)

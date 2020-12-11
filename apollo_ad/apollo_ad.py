@@ -152,7 +152,7 @@ class Forward:
                     for i in static_methods:
                         if i in function:
                             # for multiple but same static methods 
-                            function = re.sub(i + '\(', 'Variable.' + i + '(', function)
+                            function = re.sub(i + r'\(', 'Variable.' + i + '(', function)
                             function = re.sub('arcVariable.', 'arc', function)
                     all_fcts.append(eval(function))
 
@@ -253,7 +253,7 @@ class Reverse:
                     for i in static_methods:
                         if i in func:
                             # for multiple but same static methods 
-                            func = re.sub(i + '\(', 'Reverse_Mode.' + i + '(', func)
+                            func = re.sub(i + r'\(', 'Reverse_Mode.' + i + '(', func)
                             func = re.sub('arcReverse_Mode.', 'arc', func)
 
                     f1 = eval(func)
@@ -1304,14 +1304,8 @@ class Reverse_Mode:
         self.der = seed
         value = self.var
         derivatives = np.array([i.gradient() for i in inputs])
-       # self._reset(inputs)
 
         return value, derivatives
-
-    # @staticmethod
-    # def _reset(inputs):
-    #     for i in inputs:
-    #         i.der = None
 
     def __add__(self, other):
         """Dunder method for adding another Reverse_Mode object or scalar/vector

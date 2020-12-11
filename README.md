@@ -41,11 +41,24 @@ cd cs107-FinalProject
 pip install -r requirements.txt
 ```
 
+## Running Python Interactive Session From Command Line (we assume you have Python properly installed)
+From your command line, please run a command similar to the one below to access the Python interactive session:
+```bash
+python
+```
+
+If done correctly, this is the prompt you should now see:
+```bash
+>>>
+```
+
+You're ready to use Apollo AD!
+
 ## Examples
 
 #### UI
 
-We also provide an interactive session, where you can specify the variable values and functions without any coding:
+We also provide a nice interface, where you can specify the variable values and functions without any coding:
 
 ```python
 from apollo_ad import UI
@@ -57,22 +70,22 @@ UI()
 
 
 ```
-Welcome to Apollod AD Library!
+Welcome to Apollo AD Library!
 Enter the number of variables:
 2
 Enter the number of functions:
 3
-Type the variable name of variable No. 1: 
+Type the variable name of variable No. 1 (Please only input a name that CANNOT be cast as an integer or float): 
 a
-Type the value of variable a: (It must be a float)
+Type the value of variable a (Please only input a float):
 3
-Type the derivative seed of variable a. It must be a float: 
+Type the derivative seed of variable a (Please only input a float; your default input should be 1): 
 1
-Type the variable name of variable No. 2: 
+Type the variable name of variable No. 2 (Please only input a name that CANNOT be cast as an integer or float): 
 b
-Type the value of variable b: (It must be a float)
+Type the value of variable b (Please only input a float):
 2
-Type the derivative seed of variable b. It must be a float: 
+Type the derivative seed of variable b (Please only input a float; your default input should be 1): 
 1
 Type function No. 1 :
 a + b + sin(b)
@@ -104,7 +117,7 @@ Function F3: [ 812.85758699 1210.28638048]
 
 #### Programming Usage
 
-`apollo_ad` expects two inputs, a dictionary with variable name as the key and variable value as the value and a list of strings where each string describes a function:
+`apollo_ad` expects two inputs: a dictionary with variable name as the key and variable value as the value, as well as a list of strings where each string describes a function:
 
 
 ```python
@@ -130,7 +143,7 @@ print(out)
 # Function F4: [-1.23592426 -4.61880215]
 ```
 
-`apollo_ad` supports both forward and reverse mode in the backend, where the `auto_diff` class autoamtically detects which is the best way to use, depending on the number of inputs and outputs. You can also directly use the `Forward` and `Reverse` mode class. 
+`apollo_ad` supports both forward and reverse mode in the backend, where the `auto_diff` class automatically detects which is the best way to use, depending on the number of inputs and outputs. You can also directly use the `Forward` and `Reverse` mode class. Remember that both forward and reverse mode should produce the same results.
 
 ```python
 from apollo_ad import Forward, Reverse
@@ -159,7 +172,7 @@ print(out)
 # Function F2: [1. 3.]
 ```
 
-You can also specify the gradients seeds. As seed in forward mode is for each variable whereas in reverse mode is for each function, we expect a dictionary for forward mode and a list for reverse mode. Here is an example:
+You can also specify the seed. As the seed in forward mode is for each variable whereas in reverse mode it's for each function, we expect a dictionary for forward mode and a list for reverse mode. Here is an example:
 
 ```python
 var = {'x': 3, 'y': 4}
@@ -180,3 +193,8 @@ You can also run the above examples by typing:
 from apollo_ad import demo
 demo()
 ```
+
+## Additional Notes
+If you are trying to access the attributes of this package, please note that they will be lists, numpy arrays, or dictionaries.
+
+Most importantly, have fun and provide us feedback!
