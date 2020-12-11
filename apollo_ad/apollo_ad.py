@@ -147,7 +147,7 @@ class Forward:
                 static_methods = ['log', 'sqrt', 'exp', 'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan', 'sinh', 'cosh', 'tanh']
 
                 all_fcts = []
-
+                num_fct = len(fct)
                 for function in fct:
                     for i in static_methods:
                         if i in function:
@@ -240,6 +240,7 @@ class Reverse:
                 # static methods
                 static_methods = ['log', 'sqrt', 'exp', 'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan', 'sinh', 'cosh', 'tanh']
 
+                num_fct = len(fct)
                 self.der = []
                 self.var = []
                 for idx, func in enumerate(fct):

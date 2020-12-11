@@ -143,7 +143,7 @@ print(out)
 # Function F4: [-1.23592426 -4.61880215]
 ```
 
-`apollo_ad` supports both forward and reverse mode in the backend, where the `auto_diff` class autoamtically detects which is the best way to use, depending on the number of inputs and outputs. You can also directly use the `Forward` and `Reverse` mode class. 
+`apollo_ad` supports both forward and reverse mode in the backend, where the `auto_diff` class automatically detects which is the best way to use, depending on the number of inputs and outputs. You can also directly use the `Forward` and `Reverse` mode class. Remember that both forward and reverse mode should produce the same results.
 
 ```python
 from apollo_ad import Forward, Reverse
@@ -195,6 +195,6 @@ demo()
 ```
 
 ## Additional Notes
-If you are trying to access the attributes of this class, please note that they will be lists, numpy arrays, or dictionaries.
+If you are trying to access the attributes of this package, please note that they will be lists, numpy arrays, or dictionaries.
 
 Most importantly, have fun and provide us feedback!
