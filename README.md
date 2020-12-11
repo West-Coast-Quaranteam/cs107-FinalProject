@@ -54,6 +54,33 @@ If done correctly, this is the prompt you should now see:
 
 You're ready to use Apollo AD!
 
+## Elemental Functions and Examples
+
+Here is a non-exhaustive list of some of the operations available in Apollo AD, and how to use them:
+
+| Elemental Function      | Example |
+| ----------- | ----------- |
+| Addition      | x + y       |
+| Multiplication   | x * y        |
+| Subtraction      | x - y       |
+| Division   | x / y        |
+| Negation   | -x        |
+| Power      | x ** 2       |
+| Log      | log(x)       |
+| Square root      | sqrt(x)       |
+| Exponential      | exp(x)       |
+| Tangent      | tan(x)       |
+| Cosine      | cos(x)       |
+| Sine      | sin(x)       |
+| Inverse Tangent      | arctan(x)       |
+| Inverse Cosine      | arccos(x)       |
+| Inverse Sin       | arcsin(x)       |
+| Hyperbolic Tangent      | tanh(x)       |
+| Hyperbolic Cosine      | cosh(x)       |
+| Hyperbolic Sin       | sinh(x)       |
+
+We've also implemented the basic comparison operators for you to use.
+
 ## Examples
 
 #### UI
