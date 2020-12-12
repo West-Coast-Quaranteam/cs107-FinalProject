@@ -16,7 +16,7 @@ with open(path.join(this_directory, 'requirements.txt'),
 setup(
   name = 'apollo_ad',
   packages = ['apollo_ad'], 
-  version = '0.0.6',
+  version = '0.0.7',
   license='MIT',
   description = 'Auto Differentiation Tools',
   long_description=readme(),
